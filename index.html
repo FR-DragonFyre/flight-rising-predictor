@@ -607,7 +607,7 @@ function checkElementExists(id) {
 }
 
 // =========================
-// DATA STRUCTURES (Preserving your original structure)
+// DATA STRUCTURES
 // =========================
 const data = {
     breeds: [
@@ -2359,7 +2359,6 @@ function canBreed(parent1, parent2) {
     return true;
 }
 
-// ADD THIS FUNCTION HERE
 function clearOffspringContainer() {
     const container = document.getElementById('offspring-container');
     if (container) {
@@ -2429,7 +2428,6 @@ function generateRandomDragon() {
     };
 }
 
-// ADD THIS COMPLETE breedDragons FUNCTION
 function breedDragons(parent1, parent2) {
     debugLog('Breeding dragons');
     const offspring = [];
@@ -2592,7 +2590,7 @@ function generateScryingUrl(dragon) {
 }
 
 // =========================
-// UI FUNCTIONS (Preserving your originals with debugging)
+// UI FUNCTIONS
 // =========================
 function populateDropdowns() {
     debugLog('Populating dropdowns');
@@ -2727,11 +2725,11 @@ function updateDragonDisplay(dragon, parentNum) {
         document.getElementById(`parent${parentNum}-tertiary-color`).style.backgroundColor = dragon.tertiaryColor.hex;
         
         document.getElementById(`parent${parentNum}-primary-text`).textContent = 
-            `${dragon.primaryGene.name} - ${dragon.primaryColor.name}`;
+            `${dragon.primaryColor.name} - ${dragon.primaryGene.name}`;
         document.getElementById(`parent${parentNum}-secondary-text`).textContent = 
-            `${dragon.secondaryGene.name} - ${dragon.secondaryColor.name}`;
+            `${dragon.secondaryColor.name} - ${dragon.secondaryGene.name}`;
         document.getElementById(`parent${parentNum}-tertiary-text`).textContent = 
-            `${dragon.tertiaryGene.name} - ${dragon.tertiaryColor.name}`;
+            `${dragon.tertiaryColor.name} - ${dragon.tertiaryGene.name}`;
         
         // Update scrying URL
         const url = generateScryingUrl(dragon);
@@ -2773,7 +2771,6 @@ function getDragonFromForm(parentNum) {
     };
 }
 
-// ADD displayOffspring FUNCTION RIGHT HERE
 function displayOffspring(offspring) {
     debugLog('Displaying offspring');
     const container = document.getElementById('offspring-container');
@@ -2810,15 +2807,15 @@ function displayOffspring(offspring) {
             <div class="egg-dragon">${dragon.breed.name}</div>
             <div class="egg-trait">
                 <div class="egg-color" style="background-color: ${dragon.primaryColor.hex};"></div>
-                ${dragon.primaryGene.name} - ${dragon.primaryColor.name}
+                ${dragon.primaryColor.name} - ${dragon.primaryGene.name}
             </div>
             <div class="egg-trait">
                 <div class="egg-color" style="background-color: ${dragon.secondaryColor.hex};"></div>
-                ${dragon.secondaryGene.name} - ${dragon.secondaryColor.name}
+                ${dragon.secondaryColor.name} - ${dragon.secondaryGene.name}
             </div>
             <div class="egg-trait">
                 <div class="egg-color" style="background-color: ${dragon.tertiaryColor.hex};"></div>
-                ${dragon.tertiaryGene.name} - ${dragon.tertiaryColor.name}
+                ${dragon.tertiaryColor.name} - ${dragon.tertiaryGene.name}
             </div>
             <div class="egg-trait">
                 <i class="fas fa-eye"></i> ${dragon.eyeType.name}
@@ -2876,7 +2873,7 @@ function setupEventListeners() {
             });
         }
         
-    // Breed button - UPDATED
+    // Breed button
 if (breedBtn) {
     breedBtn.addEventListener('click', () => {
         debugLog('Breed button clicked');
@@ -2936,7 +2933,7 @@ if (breedBtn) {
 document.querySelectorAll('select[id$="-breed"]').forEach(select => {
     select.addEventListener('change', function() {
         const parentNum = this.id.includes('parent1') ? 1 : 2;
-        updateGeneDropdowns(parentNum); // This now preserves compatible selections
+        updateGeneDropdowns(parentNum);
         
         // Only update display after a brief delay to allow dropdowns to update
         setTimeout(() => {
