@@ -1,0 +1,3001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Rising Progeny Predictor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --dragon-primary: #8e44ad;
+            --dragon-secondary: #3498db;
+            --dragon-tertiary: #e74c3c;
+            --dragon-dark: #2c3e50;
+            --dragon-light: #ecf0f1;
+            --dragon-gold: #f39c12;
+            --dragon-fire: #e74c3c;
+            --dragon-ice: #3498db;
+            --dragon-nature: #27ae60;
+            --dragon-shadow: #8e44ad;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50, #1a2a6c);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 3px solid var(--dragon-gold);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #ffcc00;
+            text-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            padding: 20px;
+            flex-wrap: wrap;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        button {
+            background: linear-gradient(to right, var(--dragon-primary), var(--dragon-secondary));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .dragon-section {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+            gap: 30px;
+        }
+        
+        .dragon-card {
+            flex: 1;
+            min-width: 300px;
+            background: linear-gradient(to bottom right, #2c3e50, #1a1a2e);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+        
+        .dragon-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .dragon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--dragon-gold);
+        }
+        
+        .dragon-title {
+            font-size: 1.8rem;
+            color: var(--dragon-gold);
+        }
+        
+        .trait {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+        
+        .trait:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .color-block {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            margin-right: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+        
+        .color-block:hover {
+            transform: scale(1.1);
+        }
+        
+        .trait-info {
+            flex-grow: 1;
+        }
+        
+        .trait-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .customization {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .custom-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        select {
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: none;
+            background: var(--dragon-dark);
+            color: white;
+            font-size: 1rem;
+            flex: 1;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        select:hover {
+            background: #34495e;
+        }
+        
+        .offspring-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin: 20px 0;
+            color: var(--dragon-gold);
+            text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+        }
+        
+        .offspring-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+        
+        .egg-card {
+            background: radial-gradient(circle at 30% 30%, #f8f9fa, #e9ecef);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        
+        .egg-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .egg-number {
+            position: absolute;
+            top: 20px;
+            background: var(--dragon-gold);
+            color: var(--dragon-dark);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .egg-dragon {
+            color: var(--dragon-dark);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin: 15px 0;
+        }
+        
+        .egg-trait {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            color: var(--dragon-dark);
+            justify-content: center;
+        }
+        
+        .egg-color {
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+            margin-right: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+        
+        .info-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px;
+            font-size: 0.95rem;
+        }
+        
+        .info-panel h3 {
+            color: var(--dragon-gold);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .rules-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .rule-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .rule-item h4 {
+            color: var(--dragon-gold);
+            margin-bottom: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.4);
+            margin-top: 30px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .url-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            background: #555;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .dragon-section {
+                flex-direction: column;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dragon"></i> Flight Rising Progeny Predictor</h1>
+            <p class="subtitle">Advanced genetics simulator with breed-specific traits and inheritance rules</p>
+        </header>
+        
+        <div class="controls">
+            <button id="randomize-all"><i class="fas fa-random"></i> Randomize Both Dragons</button>
+            <button id="breed-btn"><i class="fas fa-egg"></i> Predict Progeny</button>
+        </div>
+        
+        <div class="dragon-section">
+            <!-- Parent 1 Card -->
+            <div class="dragon-card">
+                <div class="dragon-header">
+                    <h2 class="dragon-title"><i class="fas fa-dragon"></i> Parent Dragon 1</h2>
+                    <button id="randomize-parent1"><i class="fas fa-dice"></i> Randomize</button>
+                </div>
+                
+                <!-- Primary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent1-primary-color" style="background-color: #8e44ad;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Primary</div>
+                        <div class="trait-value" id="parent1-primary-text">Iridescent - Amethyst</div>
+                    </div>
+                </div>
+                
+                <!-- Secondary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent1-secondary-color" style="background-color: #3498db;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Secondary</div>
+                        <div class="trait-value" id="parent1-secondary-text">Shimmer - Sky</div>
+                    </div>
+                </div>
+                
+                <!-- Tertiary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent1-tertiary-color" style="background-color: #e74c3c;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Tertiary</div>
+                        <div class="trait-value" id="parent1-tertiary-text">Gembond - Ruby</div>
+                    </div>
+                </div>
+                
+                <!-- Customization Panel -->
+                <div class="customization">
+                    <h3><i class="fas fa-sliders-h"></i> Customize</h3>
+                    
+                    <!-- Breed Selection -->
+                    <div class="custom-row">
+                        <label>Breed:</label>
+                        <select id="parent1-breed"></select>
+                    </div>
+                    
+                    <!-- Primary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Primary Gene:</label>
+                        <select id="parent1-primary-gene"></select>
+                    </div>
+                    
+                    <!-- Primary Color Selection -->
+                    <div class="custom-row">
+                        <label>Primary Color:</label>
+                        <select id="parent1-primary-color-select"></select>
+                    </div>
+                    
+                    <!-- Secondary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Secondary Gene:</label>
+                        <select id="parent1-secondary-gene"></select>
+                    </div>
+                    
+                    <!-- Secondary Color Selection -->
+                    <div class="custom-row">
+                        <label>Secondary Color:</label>
+                        <select id="parent1-secondary-color-select"></select>
+                    </div>
+                    
+                    <!-- Tertiary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Tertiary Gene:</label>
+                        <select id="parent1-tertiary-gene"></select>
+                    </div>
+                    
+                    <!-- Tertiary Color Selection -->
+                    <div class="custom-row">
+                        <label>Tertiary Color:</label>
+                        <select id="parent1-tertiary-color-select"></select>
+                    </div>
+                    
+                    <!-- Gender Selection -->
+                    <div class="custom-row">
+                        <label>Gender:</label>
+                        <select id="parent1-gender">
+                            <option value="0">Male</option>
+                            <option value="1">Female</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Scrying URL -->
+                    <div class="url-box" id="parent1-url">URL will appear here</div>
+                    <button class="copy-btn" onclick="copyToClipboard('parent1-url')">Copy URL</button>
+                </div>
+            </div>
+            
+            <!-- Parent 2 Card -->
+            <div class="dragon-card">
+                <div class="dragon-header">
+                    <h2 class="dragon-title"><i class="fas fa-dragon"></i> Parent Dragon 2</h2>
+                    <button id="randomize-parent2"><i class="fas fa-dice"></i> Randomize</button>
+                </div>
+                
+                <!-- Primary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent2-primary-color" style="background-color: #2ecc71;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Primary</div>
+                        <div class="trait-value" id="parent2-primary-text">Speckle - Emerald</div>
+                    </div>
+                </div>
+                
+                <!-- Secondary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent2-secondary-color" style="background-color: #f39c12;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Secondary</div>
+                        <div class="trait-value" id="parent2-secondary-text">Stripes - Honey</div>
+                    </div>
+                </div>
+                
+                <!-- Tertiary Trait -->
+                <div class="trait">
+                    <div class="color-block" id="parent2-tertiary-color" style="background-color: #9b59b6;"></div>
+                    <div class="trait-info">
+                        <div class="trait-name">Tertiary</div>
+                        <div class="trait-value" id="parent2-tertiary-text">Underbelly - Royal</div>
+                    </div>
+                </div>
+                
+                <!-- Customization Panel -->
+                <div class="customization">
+                    <h3><i class="fas fa-sliders-h"></i> Customize</h3>
+                    
+                    <!-- Breed Selection -->
+                    <div class="custom-row">
+                        <label>Breed:</label>
+                        <select id="parent2-breed"></select>
+                    </div>
+                    
+                    <!-- Primary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Primary Gene:</label>
+                        <select id="parent2-primary-gene"></select>
+                    </div>
+                    
+                    <!-- Primary Color Selection -->
+                    <div class="custom-row">
+                        <label>Primary Color:</label>
+                        <select id="parent2-primary-color-select"></select>
+                    </div>
+                    
+                    <!-- Secondary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Secondary Gene:</label>
+                        <select id="parent2-secondary-gene"></select>
+                    </div>
+                    
+                    <!-- Secondary Color Selection -->
+                    <div class="custom-row">
+                        <label>Secondary Color:</label>
+                        <select id="parent2-secondary-color-select"></select>
+                    </div>
+                    
+                    <!-- Tertiary Gene Selection -->
+                    <div class="custom-row">
+                        <label>Tertiary Gene:</label>
+                        <select id="parent2-tertiary-gene"></select>
+                    </div>
+                    
+                    <!-- Tertiary Color Selection -->
+                    <div class="custom-row">
+                        <label>Tertiary Color:</label>
+                        <select id="parent2-tertiary-color-select"></select>
+                    </div>
+                    
+                    <!-- Gender Selection -->
+                    <div class="custom-row">
+                        <label>Gender:</label>
+                        <select id="parent2-gender">
+                            <option value="0">Male</option>
+                            <option value="1">Female</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Scrying URL -->
+                    <div class="url-box" id="parent2-url">URL will appear here</div>
+                    <button class="copy-btn" onclick="copyToClipboard('parent2-url')">Copy URL</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3><i class="fas fa-dna"></i> Inheritance Rules & Genetics</h3>
+            <div class="rules-list">
+                <div class="rule-item">
+                    <h4>Breed Inheritance</h4>
+                    <p>Plentiful vs Common: 30% chance for Common</p>
+                    <p>Plentiful vs Uncommon: 15% chance for Uncommon</p>
+                    <p>Plentiful vs Limited: 3% chance for Limited</p>
+                    <p>Plentiful vs Rare: 1% chance for Rare</p>
+                </div>
+                <div class="rule-item">
+                    <h4>Gene Inheritance</h4>
+                    <p>Each gene slot inherits independently</p>
+                    <p>Rarer genes have lower odds when paired with common genes</p>
+                    <p>Identical genes guarantee inheritance</p>
+                </div>
+                <div class="rule-item">
+                    <h4>Color Inheritance</h4>
+                    <p>Colors are randomly selected between the two parent colors</p>
+                    <p>Includes all colors between the two parent colors</p>
+                </div>
+                <div class="rule-item">
+                    <h4>Ancient Breeds</h4>
+                    <p>Can only breed with same breed</p>
+                    <p>Have unique breed-specific genes</p>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="offspring-title">Predicted Offspring</h2>
+        <div class="offspring-container" id="offspring-container">
+            <!-- Offspring will appear here -->
+        </div>
+        
+        <footer>
+            <p>Flight Rising Progeny Predictor - A fan-made tool | All data manually collected per Flight Rising's Terms of Use</p>
+            <p>This tool runs completely in your browser - no data is sent to any server</p>
+            <p><i>Last updated: 19 August 2025 - Pulled together by DragonFyre</i></p>
+        </footer>
+    </div>
+
+    <script>
+// =========================
+// DEBUGGING UTILITIES
+// =========================
+function debugLog(message) {
+    console.log('[DEBUG]', message);
+}
+
+function checkElementExists(id) {
+    const element = document.getElementById(id);
+    if (!element) {
+        console.error('Element not found:', id);
+        return false;
+    }
+    return true;
+}
+
+// =========================
+// DATA STRUCTURES (Preserving your original structure)
+// =========================
+const data = {
+    breeds: [
+        {id: 20, name: "Aberration", rarity: "Ancient"},
+        {id: 22, name: "Aether", rarity: "Ancient"},
+        {id: 24, name: "Auraboa", rarity: "Ancient"},
+        {id: 18, name: "Banescale", rarity: "Ancient"},
+        {id: 14, name: "Bogsneak", rarity: "Uncommon"},
+        {id: 27, name: "Cirrus", rarity: "Ancient"},
+        {id: 12, name: "Coatl", rarity: "Rare"},
+        {id: 25, name: "Dusthide", rarity: "Ancient"},
+        {id: 26, name: "Everlux", rarity: "Ancient"},
+        {id: 1, name: "Fae", rarity: "Plentiful"},
+        {id: 16, name: "Fathom", rarity: "Uncommon"},
+        {id: 17, name: "Gaoler", rarity: "Ancient"},
+        {id: 2, name: "Guardian", rarity: "Plentiful"},
+        {id: 8, name: "Imperial", rarity: "Limited"},
+        {id: 3, name: "Mirror", rarity: "Plentiful"},
+        {id: 11, name: "Nocturne", rarity: "Limited"},
+        {id: 15, name: "Obelisk", rarity: "Uncommon"},
+        {id: 4, name: "Pearlcatcher", rarity: "Common"},
+        {id: 5, name: "Ridgeback", rarity: "Common"},
+        {id: 23, name: "Sandsurge", rarity: "Ancient"},
+        {id: 13, name: "Skydancer", rarity: "Uncommon"},
+        {id: 9, name: "Snapper", rarity: "Common"},
+        {id: 7, name: "Spiral", rarity: "Common"},
+        {id: 6, name: "Tundra", rarity: "Plentiful"},
+        {id: 21, name: "Undertide", rarity: "Ancient"},
+        {id: 19, name: "Veilspun", rarity: "Ancient"},
+        {id: 10, name: "Wildclaw", rarity: "Rare"}
+    ],
+    
+            colors: [
+                {id: 1, name: "maize", hex: "#FFFCE9", urlValue: 1},
+                {id: 2, name: "cream", hex: "#FFF0DD", urlValue: 163},
+                {id: 3, name: "antique", hex: "#D9D6CD", urlValue: 97},
+                {id: 4, name: "white", hex: "#FFFFFF", urlValue: 2},
+                {id: 5, name: "moon", hex: "#D8D6D7", urlValue: 74},
+                {id: 6, name: "ice", hex: "#F1F3FF", urlValue: 3},
+                {id: 7, name: "orca", hex: "#E2DFFD", urlValue: 131},
+                {id: 8, name: "platinum", hex: "#C8BDCE", urlValue: 4},
+                {id: 9, name: "silver", hex: "#BCBBC0", urlValue: 5},
+                {id: 10, name: "dust", hex: "#9C9C9E", urlValue: 146},
+                {id: 11, name: "grey", hex: "#7F7F7F", urlValue: 6},
+                {id: 12, name: "smoke", hex: "#9495AA", urlValue: 91},
+                {id: 13, name: "gloom", hex: "#545365", urlValue: 98},
+                {id: 14, name: "lead", hex: "#403C3E", urlValue: 118},
+                {id: 15, name: "shale", hex: "#4D484F", urlValue: 177},
+                {id: 16, name: "flint", hex: "#636268", urlValue: 129},
+                {id: 17, name: "charcoal", hex: "#545454", urlValue: 7},
+                {id: 18, name: "coal", hex: "#4A4945", urlValue: 8},
+                {id: 19, name: "oilslick", hex: "#342B26", urlValue: 70},
+                {id: 20, name: "black", hex: "#333333", urlValue: 9},
+                {id: 21, name: "obsidian", hex: "#1D2225", urlValue: 10},
+                {id: 22, name: "eldritch", hex: "#252A24", urlValue: 176},
+                {id: 23, name: "midnight", hex: "#292B38", urlValue: 11},
+                {id: 24, name: "shadow", hex: "#3A2E44", urlValue: 12},
+                {id: 25, name: "blackberry", hex: "#4C2A4F", urlValue: 127},
+                {id: 26, name: "mulberry", hex: "#6E235C", urlValue: 13},
+                {id: 27, name: "plum", hex: "#863290", urlValue: 92},
+                {id: 28, name: "wisteria", hex: "#714D79", urlValue: 119},
+                {id: 29, name: "thistle", hex: "#8E7C8A", urlValue: 14},
+                {id: 30, name: "fog", hex: "#A592B0", urlValue: 137},
+                {id: 31, name: "mist", hex: "#E1CDFE", urlValue: 150},
+                {id: 32, name: "lavender", hex: "#CCA4E0", urlValue: 15},
+                {id: 33, name: "heather", hex: "#9678BB", urlValue: 68},
+                {id: 34, name: "purple", hex: "#A260CE", urlValue: 16},
+                {id: 35, name: "orchid", hex: "#D950FF", urlValue: 69},
+                {id: 36, name: "amethyst", hex: "#993BD1", urlValue: 114},
+                {id: 37, name: "nightshade", hex: "#772EB3", urlValue: 175},
+                {id: 38, name: "violet", hex: "#643F9C", urlValue: 17},
+                {id: 39, name: "grape", hex: "#580EC0", urlValue: 147},
+                {id: 40, name: "royal", hex: "#4E2C8A", urlValue: 18},
+                {id: 41, name: "eggplant", hex: "#3F2B66", urlValue: 111},
+                {id: 42, name: "iris", hex: "#525195", urlValue: 82},
+                {id: 43, name: "storm", hex: "#757ADA", urlValue: 19},
+                {id: 44, name: "twilight", hex: "#484AA1", urlValue: 174},
+                {id: 45, name: "indigo", hex: "#2D237A", urlValue: 112},
+                {id: 46, name: "sapphire", hex: "#0D0A5B", urlValue: 71},
+                {id: 47, name: "navy", hex: "#212B60", urlValue: 20},
+                {id: 48, name: "cobalt", hex: "#003384", urlValue: 136},
+                {id: 49, name: "ultramarine", hex: "#1B51E7", urlValue: 90},
+                {id: 50, name: "blue", hex: "#314BA7", urlValue: 21},
+                {id: 51, name: "periwinkle", hex: "#4866D4", urlValue: 135},
+                {id: 52, name: "lapis", hex: "#2C84FF", urlValue: 148},
+                {id: 53, name: "splash", hex: "#6494DC", urlValue: 22},
+                {id: 54, name: "cornflower", hex: "#75A8FF", urlValue: 145},
+                {id: 55, name: "sky", hex: "#AFC8FD", urlValue: 23},
+                {id: 56, name: "stonewash", hex: "#7895C1", urlValue: 24},
+                {id: 57, name: "overcast", hex: "#454F6A", urlValue: 126},
+                {id: 58, name: "steel", hex: "#56697A", urlValue: 25},
+                {id: 59, name: "denim", hex: "#304558", urlValue: 26},
+                {id: 60, name: "abyss", hex: "#0C1D24", urlValue: 96},
+                {id: 61, name: "phthalo", hex: "#0B2D46", urlValue: 151},
+                {id: 62, name: "azure", hex: "#0A3D68", urlValue: 27},
+                {id: 63, name: "caribbean", hex: "#0186CE", urlValue: 28},
+                {id: 64, name: "teal", hex: "#2C768F", urlValue: 29},
+                {id: 65, name: "cerulean", hex: "#00B4D5", urlValue: 117},
+                {id: 66, name: "cyan", hex: "#01FFF1", urlValue: 89},
+                {id: 67, name: "robin", hex: "#9BEAEF", urlValue: 99},
+                {id: 68, name: "aqua", hex: "#73C4C5", urlValue: 30},
+                {id: 69, name: "turquoise", hex: "#39A0A3", urlValue: 149},
+                {id: 70, name: "spruce", hex: "#8BBAB2", urlValue: 100},
+                {id: 71, name: "pistachio", hex: "#E3FFE8", urlValue: 125},
+                {id: 72, name: "seafoam", hex: "#B2E1BD", urlValue: 31},
+                {id: 73, name: "mint", hex: "#9BFEC5", urlValue: 152},
+                {id: 74, name: "jade", hex: "#61AB8A", urlValue: 32},
+                {id: 75, name: "spearmint", hex: "#148E67", urlValue: 78},
+                {id: 76, name: "thicket", hex: "#005D48", urlValue: 141},
+                {id: 77, name: "peacock", hex: "#1E4739", urlValue: 134},
+                {id: 78, name: "emerald", hex: "#20603E", urlValue: 33},
+                {id: 79, name: "shamrock", hex: "#236825", urlValue: 80},
+                {id: 80, name: "jungle", hex: "#1F361A", urlValue: 34},
+                {id: 81, name: "hunter", hex: "#1E2716", urlValue: 81},
+                {id: 82, name: "forest", hex: "#414F35", urlValue: 35},
+                {id: 83, name: "camo", hex: "#51684C", urlValue: 154},
+                {id: 84, name: "algae", hex: "#97AF8B", urlValue: 153},
+                {id: 85, name: "swamp", hex: "#687E67", urlValue: 36},
+                {id: 86, name: "avocado", hex: "#587B35", urlValue: 37},
+                {id: 87, name: "green", hex: "#609E3C", urlValue: 38},
+                {id: 88, name: "fern", hex: "#7FCE73", urlValue: 113},
+                {id: 89, name: "mantis", hex: "#99FE9C", urlValue: 79},
+                {id: 90, name: "pear", hex: "#8ECE55", urlValue: 101},
+                {id: 91, name: "leaf", hex: "#A6E330", urlValue: 39},
+                {id: 92, name: "radioactive", hex: "#C6FF00", urlValue: 130},
+                {id: 93, name: "honeydew", hex: "#D2E673", urlValue: 102},
+                {id: 94, name: "peridot", hex: "#EAFFB6", urlValue: 144},
+                {id: 95, name: "chartreuse", hex: "#B4CD3D", urlValue: 155},
+                {id: 96, name: "spring", hex: "#AA9F33", urlValue: 40},
+                {id: 97, name: "crocodile", hex: "#828335", urlValue: 173},
+                {id: 98, name: "olive", hex: "#697135", urlValue: 123},
+                {id: 99, name: "murk", hex: "#4C4420", urlValue: 142},
+                {id: 100, name: "moss", hex: "#7E7645", urlValue: 115},
+                {id: 101, name: "goldenrod", hex: "#BEA65E", urlValue: 41},
+                {id: 102, name: "amber", hex: "#C28F19", urlValue: 103},
+                {id: 103, name: "honey", hex: "#D2B301", urlValue: 93},
+                {id: 104, name: "lemon", hex: "#FFE53C", urlValue: 42},
+                {id: 105, name: "yellow", hex: "#F8E155", urlValue: 104},
+                {id: 106, name: "grapefruit", hex: "#F7FF6E", urlValue: 128},
+                {id: 107, name: "banana", hex: "#FEEC80", urlValue: 43},
+                {id: 108, name: "sanddollar", hex: "#EBE6AE", urlValue: 110},
+                {id: 109, name: "flaxen", hex: "#FDE9AE", urlValue: 139},
+                {id: 110, name: "ivory", hex: "#FFD298", urlValue: 44},
+                {id: 111, name: "buttercup", hex: "#F6BF6C", urlValue: 167},
+                {id: 112, name: "gold", hex: "#E8AE4A", urlValue: 45},
+                {id: 113, name: "metals", hex: "#D1B146", urlValue: 140},
+                {id: 114, name: "marigold", hex: "#FEB43B", urlValue: 75},
+                {id: 115, name: "sunshine", hex: "#FB912B", urlValue: 46},
+                {id: 116, name: "saffron", hex: "#FE8501", urlValue: 84},
+                {id: 117, name: "sunset", hex: "#FFA247", urlValue: 172},
+                {id: 118, name: "peach", hex: "#FFB576", urlValue: 105},
+                {id: 119, name: "cantaloupe", hex: "#FF984F", urlValue: 171},
+                {id: 120, name: "orange", hex: "#D5602B", urlValue: 47},
+                {id: 121, name: "bronze", hex: "#B1560D", urlValue: 83},
+                {id: 122, name: "terracotta", hex: "#B24407", urlValue: 108},
+                {id: 123, name: "carrot", hex: "#FF5500", urlValue: 133},
+                {id: 124, name: "fire", hex: "#EF5D24", urlValue: 48},
+                {id: 125, name: "pumpkin", hex: "#FF6841", urlValue: 158},
+                {id: 126, name: "tangerine", hex: "#FF7361", urlValue: 49},
+                {id: 127, name: "cinnamon", hex: "#C15A39", urlValue: 77},
+                {id: 128, name: "caramel", hex: "#C57047", urlValue: 156},
+                {id: 129, name: "sand", hex: "#B17749", urlValue: 50},
+                {id: 130, name: "tan", hex: "#C59A70", urlValue: 76},
+                {id: 131, name: "beige", hex: "#CBBBA1", urlValue: 51},
+                {id: 132, name: "stone", hex: "#817964", urlValue: 52},
+                {id: 133, name: "taupe", hex: "#6E665B", urlValue: 95},
+                {id: 134, name: "slate", hex: "#564D48", urlValue: 53},
+                {id: 135, name: "driftwood", hex: "#76645A", urlValue: 165},
+                {id: 136, name: "latte", hex: "#977B6D", urlValue: 143},
+                {id: 137, name: "dirt", hex: "#774840", urlValue: 162},
+                {id: 138, name: "clay", hex: "#613F3E", urlValue: 106},
+                {id: 139, name: "sable", hex: "#58382D", urlValue: 138},
+                {id: 140, name: "umber", hex: "#301E1A", urlValue: 157},
+                {id: 141, name: "soil", hex: "#5A4534", urlValue: 54},
+                {id: 142, name: "hickory", hex: "#715538", urlValue: 88},
+                {id: 143, name: "tarnish", hex: "#865C32", urlValue: 124},
+                {id: 144, name: "ginger", hex: "#8F542C", urlValue: 122},
+                {id: 145, name: "brown", hex: "#8E5B40", urlValue: 55},
+                {id: 146, name: "chocolate", hex: "#573013", urlValue: 56},
+                {id: 147, name: "auburn", hex: "#7B3C1D", urlValue: 166},
+                {id: 148, name: "copper", hex: "#A44B29", urlValue: 94},
+                {id: 149, name: "rust", hex: "#8B3220", urlValue: 57},
+                {id: 150, name: "tomato", hex: "#B9311B", urlValue: 58},
+                {id: 151, name: "vermillion", hex: "#E22D18", urlValue: 169},
+                {id: 152, name: "ruby", hex: "#CD000F", urlValue: 86},
+                {id: 153, name: "cherry", hex: "#AA0024", urlValue: 116},
+                {id: 154, name: "crimson", hex: "#850013", urlValue: 59},
+                {id: 155, name: "garnet", hex: "#5B0E14", urlValue: 161},
+                {id: 156, name: "sanguine", hex: "#2E0002", urlValue: 121},
+                {id: 157, name: "blood", hex: "#451717", urlValue: 60},
+                {id: 158, name: "maroon", hex: "#662028", urlValue: 61},
+                {id: 159, name: "berry", hex: "#8D262D", urlValue: 87},
+                {id: 160, name: "red", hex: "#C1262D", urlValue: 62},
+                {id: 161, name: "strawberry", hex: "#DF3236", urlValue: 168},
+                {id: 162, name: "cerise", hex: "#A22A2B", urlValue: 132},
+                {id: 163, name: "carmine", hex: "#B13B3B", urlValue: 63},
+                {id: 164, name: "brick", hex: "#9A534D", urlValue: 107},
+                {id: 165, name: "coral", hex: "#CC706F", urlValue: 64},
+                {id: 166, name: "blush", hex: "#FFA2A2", urlValue: 159},
+                {id: 167, name: "cottoncandy", hex: "#EC7896", urlValue: 164},
+                {id: 168, name: "watermelon", hex: "#DC528B", urlValue: 120},
+                {id: 169, name: "magenta", hex: "#EA34AB", urlValue: 65},
+                {id: 170, name: "fuchsia", hex: "#EC0089", urlValue: 170},
+                {id: 171, name: "raspberry", hex: "#8A024B", urlValue: 160},
+                {id: 172, name: "wine", hex: "#4D0F28", urlValue: 72},
+                {id: 173, name: "mauve", hex: "#9B4874", urlValue: 73},
+                {id: 174, name: "pink", hex: "#E77EC0", urlValue: 66},
+                {id: 175, name: "bubblegum", hex: "#E7A9FF", urlValue: 109},
+                {id: 176, name: "rose", hex: "#FED7F6", urlValue: 67},
+                {id: 177, name: "pearl", hex: "#FBEDFA", urlValue: 85}
+            ],
+    
+    eyeTypes: [
+        {id: 13, name: "Bright", probability: 2.2},
+        {id: 0, name: "Common", probability: 45.8},
+        {id: 4, name: "Faceted", probability: 0.7},
+        {id: 9, name: "Goat", probability: 1.1},
+        {id: 5, name: "Multi-Gaze", probability: 0.4},
+        {id: 12, name: "Pastel", probability: 2.1},
+        {id: 6, name: "Primal", probability: 0.5},
+        {id: 3, name: "Rare", probability: 9.1},
+        {id: 1, name: "Uncommon", probability: 24.2},
+        {id: 2, name: "Unusual", probability: 13.9}
+    ],
+    
+    breedOdds: {
+        "Plentiful": {"Common": 0.3, "Uncommon": 0.15, "Limited": 0.03, "Rare": 0.01},
+        "Common": {"Uncommon": 0.24, "Limited": 0.09, "Rare": 0.01},
+        "Uncommon": {"Limited": 0.13, "Rare": 0.02},
+        "Limited": {"Rare": 0.03}
+    },
+    
+    geneOdds: {
+        "Plentiful": {"Plentiful": 0.5, "Common": 0.7, "Uncommon": 0.85, "Limited": 0.97, "Rare": 0.99},
+        "Common": {"Plentiful": 0.3, "Common": 0.5, "Uncommon": 0.75, "Limited": 0.9, "Rare": 0.99},
+        "Uncommon": {"Plentiful": 0.15, "Common": 0.25, "Uncommon": 0.5, "Limited": 0.85, "Rare": 0.98},
+        "Limited": {"Plentiful": 0.03, "Common": 0.1, "Uncommon": 0.15, "Limited": 0.5, "Rare": 0.97},
+        "Rare": {"Plentiful": 0.01, "Common": 0.01, "Uncommon": 0.02, "Limited": 0.03, "Rare": 0.5}
+    },
+    
+// Primary genes with IDs and breed restrictions
+primaryGenes: [
+    // Universal genes (available to all breeds)
+    {id: 0, name: "Basic", rarity: "Plentiful", forBreed: null},
+    {id: 412, name: "Checkers", rarity: "Common", forBreed: null},
+    {id: 3, name: "Clown", rarity: "Common", forBreed: null},
+    {id: 42, name: "Fade", rarity: "Common", forBreed: null},
+    {id: 16, name: "Falcon", rarity: "Common", forBreed: null},
+    {id: 26, name: "Laced", rarity: "Common", forBreed: null},
+    {id: 40, name: "Leopard", rarity: "Common", forBreed: null},
+    {id: 9, name: "Piebald", rarity: "Common", forBreed: null},
+    {id: 18, name: "Savanna", rarity: "Common", forBreed: null},
+    {id: 4, name: "Speckle", rarity: "Common", forBreed: null},
+    {id: 57, name: "Swirl", rarity: "Common", forBreed: null},
+    {id: 21, name: "Tapir", rarity: "Common", forBreed: null},
+    {id: 2, name: "Tiger", rarity: "Common", forBreed: null},
+    {id: 450, name: "Varnish", rarity: "Common", forBreed: null},
+    {id: 6, name: "Bar", rarity: "Uncommon", forBreed: null},
+    {id: 232, name: "Boa", rarity: "Uncommon", forBreed: null},
+    {id: 10, name: "Cherub", rarity: "Uncommon", forBreed: null},
+    {id: 337, name: "Chorus", rarity: "Uncommon", forBreed: null},
+    {id: 213, name: "Cinder", rarity: "Uncommon", forBreed: null},
+    {id: 82, name: "Flaunt", rarity: "Uncommon", forBreed: null},
+    {id: 12, name: "Giraffe", rarity: "Uncommon", forBreed: null},
+    {id: 19, name: "Jaguar", rarity: "Uncommon", forBreed: null},
+    {id: 14, name: "Jupiter", rarity: "Uncommon", forBreed: null},
+    {id: 25, name: "Lionfish", rarity: "Uncommon", forBreed: null},
+    {id: 58, name: "Mosaic", rarity: "Uncommon", forBreed: null},
+    {id: 84, name: "Ribbon", rarity: "Uncommon", forBreed: null},
+    {id: 5, name: "Ripple", rarity: "Uncommon", forBreed: null},
+    {id: 8, name: "Vipera", rarity: "Uncommon", forBreed: null},
+    {id: 110, name: "Boulder", rarity: "Limited", forBreed: null},
+    {id: 136, name: "Fern", rarity: "Limited", forBreed: null},
+    {id: 88, name: "Ground", rarity: "Limited", forBreed: null},
+    {id: 411, name: "Love", rarity: "Limited", forBreed: null},
+    {id: 283, name: "Orb", rarity: "Limited", forBreed: null},
+    {id: 22, name: "Pinstripe", rarity: "Limited", forBreed: null},
+    {id: 11, name: "Poison", rarity: "Limited", forBreed: null},
+    {id: 23, name: "Python", rarity: "Limited", forBreed: null},
+    {id: 41, name: "Slime", rarity: "Limited", forBreed: null},
+    {id: 400, name: "Soil", rarity: "Limited", forBreed: null},
+    {id: 59, name: "Stitched", rarity: "Limited", forBreed: null},
+    {id: 114, name: "Tide", rarity: "Limited", forBreed: null},
+    {id: 7, name: "Crystal", rarity: "Rare", forBreed: null},
+    {id: 170, name: "Harlequin", rarity: "Rare", forBreed: null},
+    {id: 1, name: "Iridescent", rarity: "Rare", forBreed: null},
+    {id: 17, name: "Metallic", rarity: "Rare", forBreed: null},
+    {id: 13, name: "Petals", rarity: "Rare", forBreed: null},
+    {id: 318, name: "Petrified", rarity: "Rare", forBreed: null},
+    {id: 87, name: "Pharaoh", rarity: "Rare", forBreed: null},
+    {id: 24, name: "Starmap", rarity: "Rare", forBreed: null},
+    {id: 20, name: "Wasp", rarity: "Rare", forBreed: null},
+
+    // Breed-specific primary genes
+    // Aberration (id: 20)
+    {id: 89, name: "Bar", rarity: "Uncommon", forBreed: [20]},
+    {id: 91, name: "Crystal", rarity: "Rare", forBreed: [20]},
+    {id: 90, name: "Fade", rarity: "Common", forBreed: [20]},
+    {id: 92, name: "Falcon", rarity: "Common", forBreed: [20]},
+    {id: 94, name: "Giraffe", rarity: "Uncommon", forBreed: [20]},
+    {id: 97, name: "Ground", rarity: "Limited", forBreed: [20]},
+    {id: 99, name: "Jaguar", rarity: "Uncommon", forBreed: [20]},
+    {id: 100, name: "Lionfish", rarity: "Uncommon", forBreed: [20]},
+    {id: 102, name: "Orb", rarity: "Limited", forBreed: [20]},
+    {id: 103, name: "Savanna", rarity: "Common", forBreed: [20]},
+    {id: 104, name: "Swirl", rarity: "Common", forBreed: [20]},
+    {id: 95, name: "Tapir", rarity: "Common", forBreed: [20]},
+    {id: 96, name: "Vipera", rarity: "Uncommon", forBreed: [20]},
+    {id: 108, name: "Wasp", rarity: "Rare", forBreed: [20]},
+    {id: 341, name: "Mosaic", rarity: "Uncommon", forBreed: [20]},
+    {id: 386, name: "Caterpillar", rarity: "Limited", forBreed: [20]},
+    {id: 399, name: "Blossom", rarity: "Limited", forBreed: [20]},
+    {id: 401, name: "Loam", rarity: "Limited", forBreed: [20]},
+    {id: 430, name: "Medusa", rarity: "Rare", forBreed: [20]},
+    {id: 451, name: "Varnish", rarity: "Common", forBreed: [20]},
+    {id: 233, name: "Boa", rarity: "Uncommon", forBreed: [20]},
+    {id: 220, name: "Boulder", rarity: "Limited", forBreed: [20]},
+    {id: 222, name: "Clown", rarity: "Common", forBreed: [20]},
+    {id: 224, name: "Foam", rarity: "Limited", forBreed: [20]},
+    {id: 225, name: "Harlequin", rarity: "Rare", forBreed: [20]},
+    {id: 226, name: "Myrid", rarity: "Limited", forBreed: [20]},
+    {id: 227, name: "Poison", rarity: "Limited", forBreed: [20]},
+    {id: 228, name: "Ripple", rarity: "Uncommon", forBreed: [20]},
+    {id: 229, name: "Spinner", rarity: "Limited", forBreed: [20]},
+    {id: 230, name: "Starmap", rarity: "Rare", forBreed: [20]},
+    {id: 231, name: "Tide", rarity: "Limited", forBreed: [20]},
+
+    // Aether (id: 22)
+    {id: 150, name: "Bar", rarity: "Uncommon", forBreed: [22]},
+    {id: 148, name: "Fade", rarity: "Common", forBreed: [22]},
+    {id: 149, name: "Flaunt", rarity: "Uncommon", forBreed: [22]},
+    {id: 151, name: "Boulder", rarity: "Limited", forBreed: [22]},
+    {id: 152, name: "Jaguar", rarity: "Uncommon", forBreed: [22]},
+    {id: 153, name: "Jupiter", rarity: "Uncommon", forBreed: [22]},
+    {id: 155, name: "Mosaic", rarity: "Uncommon", forBreed: [22]},
+    {id: 156, name: "Laced", rarity: "Common", forBreed: [22]},
+    {id: 157, name: "Alloy", rarity: "Rare", forBreed: [22]},
+    {id: 158, name: "Lionfish", rarity: "Uncommon", forBreed: [22]},
+    {id: 159, name: "Paint", rarity: "Common", forBreed: [22]},
+    {id: 160, name: "Morph", rarity: "Limited", forBreed: [22]},
+    {id: 161, name: "Spinner", rarity: "Limited", forBreed: [22]},
+    {id: 162, name: "Spool", rarity: "Rare", forBreed: [22]},
+    {id: 163, name: "Blaze", rarity: "Uncommon", forBreed: [22]},
+    {id: 164, name: "Tide", rarity: "Limited", forBreed: [22]},
+    {id: 165, name: "Stitched", rarity: "Limited", forBreed: [22]},
+    {id: 167, name: "Candy", rarity: "Rare", forBreed: [22]},
+    {id: 168, name: "Starmap", rarity: "Rare", forBreed: [22]},
+    {id: 169, name: "Clown", rarity: "Common", forBreed: [22]},
+    {id: 288, name: "Orb", rarity: "Limited", forBreed: [22]},
+    {id: 319, name: "Checkers", rarity: "Common", forBreed: [22]},
+    {id: 320, name: "Chrysocolla", rarity: "Limited", forBreed: [22]},
+    {id: 321, name: "Current", rarity: "Uncommon", forBreed: [22]},
+    {id: 322, name: "Eel", rarity: "Uncommon", forBreed: [22]},
+    {id: 323, name: "Flecks", rarity: "Limited", forBreed: [22]},
+    {id: 324, name: "Fissure", rarity: "Limited", forBreed: [22]},
+    {id: 325, name: "Hex", rarity: "Uncommon", forBreed: [22]},
+    {id: 326, name: "Jester", rarity: "Rare", forBreed: [22]},
+    {id: 327, name: "Safari", rarity: "Common", forBreed: [22]},
+    {id: 328, name: "Striation", rarity: "Common", forBreed: [22]},
+    {id: 329, name: "Malachite", rarity: "Limited", forBreed: [22]},
+    {id: 330, name: "Porcupine", rarity: "Rare", forBreed: [22]},
+    {id: 331, name: "Peregrine", rarity: "Common", forBreed: [22]},
+    {id: 332, name: "Safari", rarity: "Common", forBreed: [22]},
+    {id: 333, name: "Striation", rarity: "Common", forBreed: [22]},
+    {id: 334, name: "Thylacine", rarity: "Common", forBreed: [22]},
+    {id: 335, name: "Spire", rarity: "Rare", forBreed: [22]},
+    {id: 336, name: "Sludge", rarity: "Limited", forBreed: [22]},
+    {id: 387, name: "Caterpillar", rarity: "Limited", forBreed: [22]},
+    {id: 424, name: "Crystalline", rarity: "Rare", forBreed: [22]},
+    {id: 428, name: "Mistral", rarity: "Rare", forBreed: [22]},
+
+    // Auraboa (id: 24)
+    {id: 238, name: "Boa", rarity: "Uncommon", forBreed: [24]},
+    {id: 239, name: "Boa", rarity: "Uncommon", forBreed: [24]},
+    {id: 240, name: "Boulder", rarity: "Limited", forBreed: [24]},
+    {id: 241, name: "Caterpillar", rarity: "Limited", forBreed: [24]},
+    {id: 242, name: "Blend", rarity: "Common", forBreed: [24]},
+    {id: 243, name: "Falcon", rarity: "Common", forBreed: [24]},
+    {id: 244, name: "Fern", rarity: "Limited", forBreed: [24]},
+    {id: 245, name: "Flair", rarity: "Uncommon", forBreed: [24]},
+    {id: 246, name: "Giraffe", rarity: "Uncommon", forBreed: [24]},
+    {id: 247, name: "Jester", rarity: "Rare", forBreed: [24]},
+    {id: 248, name: "Rosette", rarity: "Uncommon", forBreed: [24]},
+    {id: 249, name: "Edged", rarity: "Common", forBreed: [24]},
+    {id: 250, name: "Alloy", rarity: "Rare", forBreed: [24]},
+    {id: 251, name: "Mochlus", rarity: "Rare", forBreed: [24]},
+    {id: 252, name: "Breakup", rarity: "Uncommon", forBreed: [24]},
+    {id: 253, name: "Weaver", rarity: "Limited", forBreed: [24]},
+    {id: 254, name: "Paint", rarity: "Common", forBreed: [24]},
+    {id: 255, name: "Morph", rarity: "Limited", forBreed: [24]},
+    {id: 256, name: "Diamondback", rarity: "Rare", forBreed: [24]},
+    {id: 257, name: "Current", rarity: "Uncommon", forBreed: [24]},
+    {id: 258, name: "Striation", rarity: "Common", forBreed: [24]},
+    {id: 259, name: "Stripes", rarity: "Common", forBreed: [24]},
+    {id: 260, name: "Hypnotic", rarity: "Uncommon", forBreed: [24]},
+    {id: 261, name: "Lacquer", rarity: "Common", forBreed: [24]},
+    {id: 262, name: "Woven", rarity: "Rare", forBreed: [24]},
+    {id: 263, name: "Constellation", rarity: "Rare", forBreed: [24]},
+    {id: 266, name: "Crystalline", rarity: "Rare", forBreed: [24]},
+    {id: 279, name: "Affection", rarity: "Limited", forBreed: [24]},
+    {id: 308, name: "Greenskeeper", rarity: "Limited", forBreed: [24]},
+    {id: 342, name: "Starfall", rarity: "Rare", forBreed: [24]},
+    {id: 478, name: "Warrior", rarity: "Rare", forBreed: [24]},
+
+    // Banescale (id: 18)
+    {id: 43, name: "Cherub", rarity: "Uncommon", forBreed: [18]},
+    {id: 44, name: "Jaguar", rarity: "Uncommon", forBreed: [18]},
+    {id: 45, name: "Pinstripe", rarity: "Limited", forBreed: [18]},
+    {id: 46, name: "Stripes", rarity: "Common", forBreed: [18]},
+    {id: 47, name: "Marble", rarity: "Rare", forBreed: [18]},
+    {id: 48, name: "Edged", rarity: "Common", forBreed: [18]},
+    {id: 49, name: "Alloy", rarity: "Rare", forBreed: [18]},
+    {id: 50, name: "Crackle", rarity: "Uncommon", forBreed: [18]},
+    {id: 51, name: "Butterfly", rarity: "Rare", forBreed: [18]},
+    {id: 52, name: "Spinner", rarity: "Limited", forBreed: [18]},
+    {id: 53, name: "Toxin", rarity: "Limited", forBreed: [18]},
+    {id: 54, name: "Arrow", rarity: "Limited", forBreed: [18]},
+    {id: 55, name: "Candycane", rarity: "Rare", forBreed: [18]},
+    {id: 56, name: "Tear", rarity: "Limited", forBreed: [18]},
+    {id: 74, name: "Striation", rarity: "Common", forBreed: [18]},
+    {id: 75, name: "Clown", rarity: "Common", forBreed: [18]},
+    {id: 76, name: "Clown", rarity: "Common", forBreed: [18]},
+    {id: 79, name: "Current", rarity: "Uncommon", forBreed: [18]},
+    {id: 80, name: "Peregrine", rarity: "Common", forBreed: [18]},
+    {id: 81, name: "Hex", rarity: "Uncommon", forBreed: [18]},
+    {id: 85, name: "Fade", rarity: "Common", forBreed: [18]},
+    {id: 86, name: "Fade", rarity: "Common", forBreed: [18]},
+    {id: 109, name: "Leopard", rarity: "Common", forBreed: [18]},
+    {id: 137, name: "Fern", rarity: "Limited", forBreed: [18]},
+    {id: 147, name: "Speckle", rarity: "Common", forBreed: [18]},
+    {id: 180, name: "Clouded", rarity: "Common", forBreed: [18]},
+    {id: 181, name: "Daub", rarity: "Uncommon", forBreed: [18]},
+    {id: 182, name: "Facet", rarity: "Rare", forBreed: [18]},
+    {id: 183, name: "Eel", rarity: "Uncommon", forBreed: [18]},
+    {id: 184, name: "Foam", rarity: "Limited", forBreed: [18]},
+    {id: 185, name: "Pharaoh", rarity: "Rare", forBreed: [18]},
+    {id: 196, name: "Flameforger", rarity: "Rare", forBreed: [18]},
+    {id: 215, name: "Blaze", rarity: "Uncommon", forBreed: [18]},
+    {id: 235, name: "Boa", rarity: "Uncommon", forBreed: [18]},
+    {id: 287, name: "Orb", rarity: "Limited", forBreed: [18]},
+    {id: 289, name: "Myrid", rarity: "Limited", forBreed: [18]},
+    {id: 342, name: "Mosaic", rarity: "Uncommon", forBreed: [18]},
+    {id: 388, name: "Caterpillar", rarity: "Limited", forBreed: [18]},
+    {id: 395, name: "Hypnotic", rarity: "Uncommon", forBreed: [18]},
+    {id: 404, name: "Loam", rarity: "Limited", forBreed: [18]},
+    {id: 426, name: "Trickmurk", rarity: "Rare", forBreed: [18]},
+    {id: 452, name: "Varnish", rarity: "Common", forBreed: [18]},
+
+    // Cirrus (id: 27)
+    {id: 416, name: "Arc", rarity: "Uncommon", forBreed: [27]},
+    {id: 417, name: "Daub", rarity: "Uncommon", forBreed: [27]},
+    {id: 418, name: "Faire", rarity: "Rare", forBreed: [27]},
+    {id: 419, name: "Cherub", rarity: "Uncommon", forBreed: [27]},
+    {id: 420, name: "Choir", rarity: "Uncommon", forBreed: [27]},
+    {id: 421, name: "Cinder", rarity: "Uncommon", forBreed: [27]},
+    {id: 422, name: "Blend", rarity: "Common", forBreed: [27]},
+    {id: 423, name: "Flair", rarity: "Uncommon", forBreed: [27]},
+    {id: 424, name: "Crystalline", rarity: "Rare", forBreed: [27]},
+    {id: 425, name: "Orb", rarity: "Limited", forBreed: [27]},
+    {id: 427, name: "Harlequin", rarity: "Rare", forBreed: [27]},
+    {id: 428, name: "Paint", rarity: "Common", forBreed: [27]},
+    {id: 429, name: "Alloy", rarity: "Rare", forBreed: [27]},
+    {id: 430, name: "Morph", rarity: "Limited", forBreed: [27]},
+    {id: 431, name: "Ragged", rarity: "Limited", forBreed: [27]},
+    {id: 432, name: "Ripple", rarity: "Uncommon", forBreed: [27]},
+    {id: 433, name: "Bee", rarity: "Rare", forBreed: [27]},
+    {id: 434, name: "Hypnotic", rarity: "Uncommon", forBreed: [27]},
+    {id: 435, name: "Lacquer", rarity: "Common", forBreed: [27]},
+    {id: 436, name: "Stripes", rarity: "Common", forBreed: [27]},
+    {id: 437, name: "Spinner", rarity: "Limited", forBreed: [27]},
+    {id: 438, name: "Loam", rarity: "Limited", forBreed: [27]},
+    {id: 439, name: "Roan", rarity: "Uncommon", forBreed: [27]},
+    {id: 440, name: "Checkers", rarity: "Common", forBreed: [27]},
+    {id: 441, name: "Spinner", rarity: "Limited", forBreed: [27]},
+    {id: 442, name: "Ghost", rarity: "Uncommon", forBreed: [27]},
+    {id: 443, name: "Glitch", rarity: "Rare", forBreed: [27]},
+    {id: 444, name: "Falcon", rarity: "Common", forBreed: [27]},
+    {id: 445, name: "Kumo", rarity: "Limited", forBreed: [27]},
+    {id: 446, name: "Butterfly", rarity: "Rare", forBreed: [27]},
+    {id: 447, name: "Okapi", rarity: "Uncommon", forBreed: [27]},
+    {id: 448, name: "Peregrine", rarity: "Common", forBreed: [27]},
+    {id: 449, name: "Petrified", rarity: "Rare", forBreed: [27]},
+    {id: 450, name: "Varnish", rarity: "Common", forBreed: [27]},
+    {id: 451, name: "Polypore", rarity: "Limited", forBreed: [27]},
+    {id: 452, name: "Sailfin", rarity: "Rare", forBreed: [27]},
+    {id: 453, name: "Skeletal", rarity: "Limited", forBreed: [27]},
+    {id: 454, name: "Spectre", rarity: "Rare", forBreed: [27]},
+    {id: 455, name: "Thorns", rarity: "Limited", forBreed: [27]},
+    {id: 456, name: "Topscale", rarity: "Rare", forBreed: [27]},
+    {id: 457, name: "Willow", rarity: "Uncommon", forBreed: [27]},
+    {id: 458, name: "Wool", rarity: "Limited", forBreed: [27]},
+    {id: 459, name: "Spores", rarity: "Uncommon", forBreed: [27]},
+    {id: 460, name: "Quagga", rarity: "Limited", forBreed: [27]},
+    {id: 461, name: "Sparkle", rarity: "Uncommon", forBreed: [27]},
+    {id: 462, name: "Runes", rarity: "Uncommon", forBreed: [27]},
+    {id: 463, name: "Greenskeeper", rarity: "Limited", forBreed: [27]},
+    {id: 466, name: "Brightshine", rarity: "Rare", forBreed: [27]},
+    {id: 467, name: "Gnarlhorns", rarity: "Limited", forBreed: [27]},
+    {id: 477, name: "Thundercrack", rarity: "Rare", forBreed: [27]},
+    {id: 479, name: "Warrior", rarity: "Rare", forBreed: [27]},
+
+    // Dusthide (id: 25)
+    {id: 292, name: "Daub", rarity: "Uncommon", forBreed: [25]},
+    {id: 293, name: "Checkers", rarity: "Common", forBreed: [25]},
+    {id: 294, name: "Speckle", rarity: "Common", forBreed: [25]},
+    {id: 295, name: "Blaze", rarity: "Uncommon", forBreed: [25]},
+    {id: 296, name: "Blend", rarity: "Common", forBreed: [25]},
+    {id: 297, name: "Hex", rarity: "Uncommon", forBreed: [25]},
+    {id: 298, name: "Fissure", rarity: "Limited", forBreed: [25]},
+    {id: 299, name: "Ground", rarity: "Limited", forBreed: [25]},
+    {id: 300, name: "Jupiter", rarity: "Uncommon", forBreed: [25]},
+    {id: 301, name: "Falcon", rarity: "Common", forBreed: [25]},
+    {id: 302, name: "Edged", rarity: "Common", forBreed: [25]},
+    {id: 303, name: "Weaver", rarity: "Limited", forBreed: [25]},
+    {id: 304, name: "Butterfly", rarity: "Rare", forBreed: [25]},
+    {id: 305, name: "Paint", rarity: "Common", forBreed: [25]},
+    {id: 306, name: "Arc", rarity: "Uncommon", forBreed: [25]},
+    {id: 307, name: "Spire", rarity: "Rare", forBreed: [25]},
+    {id: 308, name: "Trail", rarity: "Limited", forBreed: [25]},
+    {id: 309, name: "Brightshine", rarity: "Rare", forBreed: [25]},
+    {id: 310, name: "Bee", rarity: "Rare", forBreed: [25]},
+    {id: 311, name: "Eel", rarity: "Uncommon", forBreed: [25]},
+    {id: 312, name: "Ripple", rarity: "Uncommon", forBreed: [25]},
+    {id: 313, name: "Marlin", rarity: "Limited", forBreed: [25]},
+    {id: 314, name: "Safari", rarity: "Common", forBreed: [25]},
+    {id: 315, name: "Spinner", rarity: "Limited", forBreed: [25]},
+    {id: 316, name: "Lacquer", rarity: "Common", forBreed: [25]},
+    {id: 317, name: "Parade", rarity: "Rare", forBreed: [25]},
+    {id: 343, name: "Mosaic", rarity: "Uncommon", forBreed: [25]},
+    {id: 389, name: "Caterpillar", rarity: "Limited", forBreed: [25]},
+    {id: 405, name: "Loam", rarity: "Limited", forBreed: [25]},
+    {id: 480, name: "Warrior", rarity: "Rare", forBreed: [25]},
+
+    // Everlux (id: 26)
+    {id: 345, name: "Arapaima", rarity: "Rare", forBreed: [26]},
+    {id: 346, name: "Bar", rarity: "Uncommon", forBreed: [26]},
+    {id: 347, name: "Blend", rarity: "Common", forBreed: [26]},
+    {id: 348, name: "Daub", rarity: "Uncommon", forBreed: [26]},
+    {id: 349, name: "Facet", rarity: "Rare", forBreed: [26]},
+    {id: 350, name: "Flair", rarity: "Uncommon", forBreed: [26]},
+    {id: 351, name: "Larvae", rarity: "Limited", forBreed: [26]},
+    {id: 352, name: "Malachite", rarity: "Limited", forBreed: [26]},
+    {id: 353, name: "Seraph", rarity: "Uncommon", forBreed: [26]},
+    {id: 354, name: "Fishbone", rarity: "Limited", forBreed: [26]},
+    {id: 355, name: "Edged", rarity: "Common", forBreed: [26]},
+    {id: 356, name: "Mottle", rarity: "Rare", forBreed: [26]},
+    {id: 357, name: "Noxtide", rarity: "Uncommon", forBreed: [26]},
+    {id: 358, name: "Saturn", rarity: "Uncommon", forBreed: [26]},
+    {id: 359, name: "Butterfly", rarity: "Rare", forBreed: [26]},
+    {id: 360, name: "Lode", rarity: "Rare", forBreed: [26]},
+    {id: 361, name: "Eclosion", rarity: "Rare", forBreed: [26]},
+    {id: 362, name: "Morph", rarity: "Limited", forBreed: [26]},
+    {id: 363, name: "Sarcophagus", rarity: "Rare", forBreed: [26]},
+    {id: 364, name: "Swallowtail", rarity: "Rare", forBreed: [26]},
+    {id: 365, name: "Pinstripe", rarity: "Limited", forBreed: [26]},
+    {id: 366, name: "Current", rarity: "Uncommon", forBreed: [26]},
+    {id: 367, name: "Spinner", rarity: "Limited", forBreed: [26]},
+    {id: 368, name: "Trail", rarity: "Limited", forBreed: [26]},
+    {id: 369, name: "Hawkmoth", rarity: "Rare", forBreed: [26]},
+    {id: 370, name: "Sludge", rarity: "Limited", forBreed: [26]},
+    {id: 371, name: "Coil", rarity: "Limited", forBreed: [26]},
+    {id: 372, name: "Constellation", rarity: "Rare", forBreed: [26]},
+    {id: 373, name: "Foam", rarity: "Limited", forBreed: [26]},
+    {id: 374, name: "Stripes", rarity: "Common", forBreed: [26]},
+    {id: 375, name: "Toxin", rarity: "Limited", forBreed: [26]},
+    {id: 376, name: "Lacquer", rarity: "Common", forBreed: [26]},
+    {id: 377, name: "Throne", rarity: "Rare", forBreed: [26]},
+    {id: 378, name: "Crown", rarity: "Rare", forBreed: [26]},
+    {id: 379, name: "Harlequin", rarity: "Rare", forBreed: [26]},
+    {id: 380, name: "Jester", rarity: "Rare", forBreed: [26]},
+    {id: 381, name: "Noxtide", rarity: "Uncommon", forBreed: [26]},
+    {id: 382, name: "Vipera", rarity: "Uncommon", forBreed: [26]},
+    {id: 383, name: "Wish", rarity: "Rare", forBreed: [26]},
+    {id: 384, name: "Wool", rarity: "Limited", forBreed: [26]},
+    {id: 385, name: "Harp", rarity: "Rare", forBreed: [26]},
+    {id: 410, name: "Loam", rarity: "Limited", forBreed: [26]},
+    {id: 425, name: "Crystalline", rarity: "Rare", forBreed: [26]},
+    {id: 429, name: "Mistral", rarity: "Rare", forBreed: [26]},
+    {id: 432, name: "Wavecrest", rarity: "Limited", forBreed: [26]},
+    {id: 465, name: "Brightshine", rarity: "Rare", forBreed: [26]},
+
+    // Gaoler (id: 17)
+    {id: 27, name: "Hex", rarity: "Uncommon", forBreed: [17]},
+    {id: 28, name: "Bee", rarity: "Rare", forBreed: [17]},
+    {id: 29, name: "Thylacine", rarity: "Common", forBreed: [17]},
+    {id: 30, name: "Peregrine", rarity: "Common", forBreed: [17]},
+    {id: 31, name: "Paint", rarity: "Common", forBreed: [17]},
+    {id: 32, name: "Trail", rarity: "Limited", forBreed: [17]},
+    {id: 33, name: "Rosette", rarity: "Uncommon", forBreed: [17]},
+    {id: 34, name: "Daub", rarity: "Uncommon", forBreed: [17]},
+    {id: 35, name: "Striation", rarity: "Common", forBreed: [17]},
+    {id: 36, name: "Blossom", rarity: "Limited", forBreed: [17]},
+    {id: 37, name: "Crystal", rarity: "Rare", forBreed: [17]},
+    {id: 38, name: "Breakup", rarity: "Uncommon", forBreed: [17]},
+    {id: 39, name: "Phantom", rarity: "Rare", forBreed: [17]},
+    {id: 55, name: "Braids", rarity: "Limited", forBreed: [17]},
+    {id: 73, name: "Edged", rarity: "Common", forBreed: [17]},
+    {id: 77, name: "Clown", rarity: "Common", forBreed: [17]},
+    {id: 78, name: "Current", rarity: "Uncommon", forBreed: [17]},
+    {id: 86, name: "Blend", rarity: "Common", forBreed: [17]},
+    {id: 99, name: "Sparkle", rarity: "Uncommon", forBreed: [17]},
+    {id: 101, name: "Glimmer", rarity: "Rare", forBreed: [17]},
+    {id: 111, name: "Flair", rarity: "Uncommon", forBreed: [17]},
+    {id: 157, name: "Contour", rarity: "Common", forBreed: [17]},
+    {id: 166, name: "Carnivore", rarity: "Limited", forBreed: [17]},
+    {id: 171, name: "Boa", rarity: "Uncommon", forBreed: [17]},
+    {id: 173, name: "Sludge", rarity: "Limited", forBreed: [17]},
+    {id: 174, name: "Eel", rarity: "Uncommon", forBreed: [17]},
+    {id: 175, name: "Safari", rarity: "Common", forBreed: [17]},
+    {id: 176, name: "Spinner", rarity: "Limited", forBreed: [17]},
+    {id: 177, name: "Sludge", rarity: "Limited", forBreed: [17]},
+    {id: 178, name: "Marbled", rarity: "Common", forBreed: [17]},
+    {id: 179, name: "Stitched", rarity: "Limited", forBreed: [17]},
+    {id: 180, name: "Clouded", rarity: "Common", forBreed: [17]},
+    {id: 195, name: "Thundercrack", rarity: "Rare", forBreed: [17]},
+    {id: 212, name: "Riot", rarity: "Rare", forBreed: [17]},
+    {id: 216, name: "Blaze", rarity: "Uncommon", forBreed: [17]},
+    {id: 265, name: "Crystalline", rarity: "Rare", forBreed: [17]},
+    {id: 272, name: "Mistral", rarity: "Rare", forBreed: [17]},
+    {id: 286, name: "Weaver", rarity: "Limited", forBreed: [17]},
+    {id: 290, name: "Myrid", rarity: "Limited", forBreed: [17]},
+    {id: 302, name: "Firebreather", rarity: "Limited", forBreed: [17]},
+    {id: 303, name: "Firebreather", rarity: "Limited", forBreed: [17]},
+    {id: 343, name: "Mosaic", rarity: "Uncommon", forBreed: [17]},
+    {id: 346, name: "Thorns", rarity: "Limited", forBreed: [17]},
+    {id: 378, name: "Checkers", rarity: "Common", forBreed: [17]},
+    {id: 380, name: "Jester", rarity: "Rare", forBreed: [17]},
+    {id: 381, name: "Noxtide", rarity: "Uncommon", forBreed: [17]},
+    {id: 382, name: "Lacquer", rarity: "Common", forBreed: [17]},
+    {id: 386, name: "Branches", rarity: "Limited", forBreed: [17]},
+    {id: 387, name: "Circuit", rarity: "Rare", forBreed: [17]},
+    {id: 388, name: "Soap", rarity: "Rare", forBreed: [17]},
+    {id: 391, name: "Rockbreaker", rarity: "Rare", forBreed: [17]},
+    {id: 396, name: "Hypnotic", rarity: "Uncommon", forBreed: [17]},
+    {id: 406, name: "Loam", rarity: "Limited", forBreed: [17]},
+    {id: 417, name: "Gecko", rarity: "Uncommon", forBreed: [17]},
+    {id: 429, name: "Metallic", rarity: "Rare", forBreed: [17]},
+
+    // Sandsurge (id: 23)
+    {id: 186, name: "Ground", rarity: "Limited", forBreed: [23]},
+    {id: 188, name: "Myrid", rarity: "Limited", forBreed: [23]},
+    {id: 189, name: "Branches", rarity: "Limited", forBreed: [23]},
+    {id: 190, name: "Cherub", rarity: "Uncommon", forBreed: [23]},
+    {id: 191, name: "Blend", rarity: "Common", forBreed: [23]},
+    {id: 192, name: "Smirch", rarity: "Limited", forBreed: [23]},
+    {id: 193, name: "Flair", rarity: "Uncommon", forBreed: [23]},
+    {id: 194, name: "Arapaima", rarity: "Rare", forBreed: [23]},
+    {id: 195, name: "Malachite", rarity: "Limited", forBreed: [23]},
+    {id: 196, name: "Clown", rarity: "Common", forBreed: [23]},
+    {id: 197, name: "Saturn", rarity: "Uncommon", forBreed: [23]},
+    {id: 198, name: "Jaguar", rarity: "Uncommon", forBreed: [23]},
+    {id: 199, name: "Lionfish", rarity: "Uncommon", forBreed: [23]},
+    {id: 200, name: "Breakup", rarity: "Uncommon", forBreed: [23]},
+    {id: 201, name: "Paint", rarity: "Common", forBreed: [23]},
+    {id: 202, name: "Pinstripe", rarity: "Limited", forBreed: [23]},
+    {id: 203, name: "Morph", rarity: "Limited", forBreed: [23]},
+    {id: 204, name: "Safari", rarity: "Common", forBreed: [23]},
+    {id: 206, name: "Diamondback", rarity: "Rare", forBreed: [23]},
+    {id: 207, name: "Bee", rarity: "Rare", forBreed: [23]},
+    {id: 208, name: "Sludge", rarity: "Limited", forBreed: [23]},
+    {id: 209, name: "Marbled", rarity: "Common", forBreed: [23]},
+    {id: 210, name: "Striation", rarity: "Common", forBreed: [23]},
+    {id: 211, name: "Stripes", rarity: "Common", forBreed: [23]},
+    {id: 212, name: "Marlin", rarity: "Limited", forBreed: [23]},
+    {id: 217, name: "Blaze", rarity: "Uncommon", forBreed: [23]},
+    {id: 245, name: "Rockbreaker", rarity: "Rare", forBreed: [23]},
+    {id: 284, name: "Orb", rarity: "Limited", forBreed: [23]},
+    {id: 341, name: "Flameforger", rarity: "Rare", forBreed: [23]},
+    {id: 347, name: "Thorns", rarity: "Limited", forBreed: [23]},
+    {id: 367, name: "Paradise", rarity: "Rare", forBreed: [23]},
+    {id: 391, name: "Caterpillar", rarity: "Limited", forBreed: [23]},
+    {id: 394, name: "Fern", rarity: "Limited", forBreed: [23]},
+    {id: 397, name: "Vipera", rarity: "Uncommon", forBreed: [23]},
+    {id: 398, name: "Blossom", rarity: "Limited", forBreed: [23]},
+    {id: 407, name: "Loam", rarity: "Limited", forBreed: [23]},
+    {id: 408, name: "Spores", rarity: "Uncommon", forBreed: [23]},
+    {id: 410, name: "Capsule", rarity: "Limited", forBreed: [23]},
+    {id: 418, name: "Gecko", rarity: "Uncommon", forBreed: [23]},
+    {id: 442, name: "Lacquer", rarity: "Common", forBreed: [23]},
+    {id: 443, name: "Hawkmoth", rarity: "Rare", forBreed: [23]},
+    {id: 444, name: "Falcon", rarity: "Common", forBreed: [23]},
+    {id: 445, name: "Tear", rarity: "Limited", forBreed: [23]},
+    {id: 446, name: "Butterfly", rarity: "Rare", forBreed: [23]},
+    {id: 447, name: "Eel", rarity: "Uncommon", forBreed: [23]},
+    {id: 448, name: "Peregrine", rarity: "Common", forBreed: [23]},
+    {id: 449, name: "Lode", rarity: "Rare", forBreed: [23]},
+    {id: 467, name: "Gnarlhorns", rarity: "Limited", forBreed: [23]},
+    {id: 468, name: "Whiskers", rarity: "Limited", forBreed: [23]},
+    {id: 469, name: "Smoke", rarity: "Uncommon", forBreed: [23]},
+    {id: 470, name: "Batty", rarity: "Limited", forBreed: [23]},
+    {id: 471, name: "Mandibles", rarity: "Limited", forBreed: [23]},
+    {id: 472, name: "Eclipse", rarity: "Rare", forBreed: [23]},
+    {id: 473, name: "Firefly", rarity: "Limited", forBreed: [23]},
+    {id: 474, name: "Flecks", rarity: "Limited", forBreed: [23]},
+    {id: 475, name: "Polkadot", rarity: "Limited", forBreed: [23]},
+    {id: 476, name: "Thundercrack", rarity: "Rare", forBreed: [23]},
+
+    // Undertide (id: 21)
+    {id: 113, name: "Tide", rarity: "Limited", forBreed: [21]},
+    {id: 115, name: "Crackle", rarity: "Uncommon", forBreed: [21]},
+    {id: 116, name: "Pack", rarity: "Limited", forBreed: [21]},
+    {id: 117, name: "Circuit", rarity: "Rare", forBreed: [21]},
+    {id: 118, name: "Facet", rarity: "Rare", forBreed: [21]},
+    {id: 119, name: "Remora", rarity: "Limited", forBreed: [21]},
+    {id: 120, name: "Pharaoh", rarity: "Rare", forBreed: [21]},
+    {id: 121, name: "Pinstripe", rarity: "Limited", forBreed: [21]},
+    {id: 122, name: "Peregrine", rarity: "Common", forBreed: [21]},
+    {id: 123, name: "Gembond", rarity: "Uncommon", forBreed: [21]},
+    {id: 124, name: "Soap", rarity: "Rare", forBreed: [21]},
+    {id: 125, name: "Bee", rarity: "Rare", forBreed: [21]},
+    {id: 126, name: "Lionfish", rarity: "Uncommon", forBreed: [21]},
+    {id: 127, name: "Checkers", rarity: "Common", forBreed: [21]},
+    {id: 128, name: "Saddle", rarity: "Uncommon", forBreed: [21]},
+    {id: 129, name: "Safari", rarity: "Common", forBreed: [21]},
+    {id: 130, name: "Current", rarity: "Uncommon", forBreed: [21]},
+    {id: 131, name: "Toxin", rarity: "Limited", forBreed: [21]},
+    {id: 132, name: "Speckle", rarity: "Common", forBreed: [21]},
+    {id: 133, name: "Rings", rarity: "Limited", forBreed: [21]},
+    {id: 134, name: "Marbled", rarity: "Common", forBreed: [21]},
+    {id: 135, name: "Myrid", rarity: "Limited", forBreed: [21]},
+    {id: 170, name: "Brightshine", rarity: "Rare", forBreed: [21]},
+    {id: 172, name: "Foam", rarity: "Limited", forBreed: [21]},
+    {id: 246, name: "Angler", rarity: "Limited", forBreed: [21]},
+    {id: 247, name: "Opal", rarity: "Rare", forBreed: [21]},
+    {id: 248, name: "Branches", rarity: "Limited", forBreed: [21]},
+    {id: 249, name: "Contour", rarity: "Common", forBreed: [21]},
+    {id: 250, name: "Crest", rarity: "Limited", forBreed: [21]},
+    {id: 251, name: "Fans", rarity: "Uncommon", forBreed: [21]},
+    {id: 252, name: "Firebreather", rarity: "Limited", forBreed: [21]},
+    {id: 253, name: "Firefly", rarity: "Limited", forBreed: [21]},
+    {id: 254, name: "Koi", rarity: "Rare", forBreed: [21]},
+    {id: 255, name: "Medusa", rarity: "Rare", forBreed: [21]},
+    {id: 256, name: "Porcupine", rarity: "Rare", forBreed: [21]},
+    {id: 257, name: "Scales", rarity: "Limited", forBreed: [21]},
+    {id: 258, name: "Shark", rarity: "Limited", forBreed: [21]},
+    {id: 259, name: "Smirch", rarity: "Limited", forBreed: [21]},
+    {id: 260, name: "Smoke", rarity: "Uncommon", forBreed: [21]},
+    {id: 261, name: "Spines", rarity: "Uncommon", forBreed: [21]},
+    {id: 262, name: "Stinger", rarity: "Limited", forBreed: [21]},
+    {id: 263, name: "Thorns", rarity: "Limited", forBreed: [21]},
+    {id: 264, name: "Malachite", rarity: "Limited", forBreed: [21]},
+    {id: 267, name: "Blossom", rarity: "Limited", forBreed: [21]},
+    {id: 268, name: "Keel", rarity: "Limited", forBreed: [21]},
+    {id: 269, name: "Jellyfish", rarity: "Rare", forBreed: [21]},
+    {id: 270, name: "Saturn", rarity: "Uncommon", forBreed: [21]},
+    {id: 271, name: "Weaver", rarity: "Limited", forBreed: [21]},
+    {id: 272, name: "Paint", rarity: "Common", forBreed: [21]},
+    {id: 273, name: "Constellation", rarity: "Rare", forBreed: [21]},
+    {id: 274, name: "Striation", rarity: "Common", forBreed: [21]},
+    {id: 275, name: "Stripes", rarity: "Common", forBreed: [21]},
+    {id: 276, name: "Lacquer", rarity: "Common", forBreed: [21]},
+    {id: 277, name: "Spire", rarity: "Rare", forBreed: [21]},
+    {id: 278, name: "Alloy", rarity: "Rare", forBreed: [21]},
+    {id: 280, name: "Patchwork", rarity: "Limited", forBreed: [21]},
+    {id: 281, name: "Butterfly", rarity: "Rare", forBreed: [21]},
+    {id: 282, name: "Jester", rarity: "Rare", forBreed: [21]},
+    {id: 301, name: "Wavecrest", rarity: "Limited", forBreed: [21]},
+    {id: 305, name: "Firebreather", rarity: "Limited", forBreed: [21]},
+    {id: 390, name: "Caterpillar", rarity: "Limited", forBreed: [21]},
+    {id: 398, name: "Vipera", rarity: "Uncommon", forBreed: [21]},
+    {id: 408, name: "Loam", rarity: "Limited", forBreed: [21]},
+    {id: 419, name: "Gecko", rarity: "Uncommon", forBreed: [21]},
+    {id: 422, name: "Eclipse", rarity: "Rare", forBreed: [21]},
+    {id: 427, name: "Trickmurk", rarity: "Rare", forBreed: [21]},
+    {id: 464, name: "Greenskeeper", rarity: "Limited", forBreed: [21]},
+
+    // Veilspun (id: 19)
+    {id: 60, name: "Fade", rarity: "Common", forBreed: [19]},
+    {id: 61, name: "Firefly", rarity: "Limited", forBreed: [19]},
+    {id: 62, name: "Edged", rarity: "Common", forBreed: [19]},
+    {id: 63, name: "Striation", rarity: "Common", forBreed: [19]},
+    {id: 64, name: "Hypnotic", rarity: "Uncommon", forBreed: [19]},
+    {id: 65, name: "Beetle", rarity: "Limited", forBreed: [19]},
+    {id: 66, name: "Constellation", rarity: "Rare", forBreed: [19]},
+    {id: 67, name: "Patchwork", rarity: "Limited", forBreed: [19]},
+    {id: 68, name: "Spinner", rarity: "Limited", forBreed: [19]},
+    {id: 69, name: "Bright", rarity: "Rare", forBreed: [19]},
+    {id: 70, name: "Arc", rarity: "Uncommon", forBreed: [19]},
+    {id: 71, name: "Web", rarity: "Limited", forBreed: [19]},
+    {id: 72, name: "Hawkmoth", rarity: "Rare", forBreed: [19]},
+    {id: 76, name: "Gliders", rarity: "Rare", forBreed: [19]},
+    {id: 83, name: "Capsule", rarity: "Limited", forBreed: [19]},
+    {id: 108, name: "Koi", rarity: "Rare", forBreed: [19]},
+    {id: 109, name: "Underbelly", rarity: "Common", forBreed: [19]},
+    {id: 110, name: "Stained", rarity: "Rare", forBreed: [19]},
+    {id: 111, name: "Capsule", rarity: "Limited", forBreed: [19]},
+    {id: 112, name: "Flecks", rarity: "Limited", forBreed: [19]},
+    {id: 113, name: "Veined", rarity: "Limited", forBreed: [19]},
+    {id: 118, name: "Feather", rarity: "Limited", forBreed: [19]},
+    {id: 121, name: "Ghost", rarity: "Uncommon", forBreed: [19]},
+    {id: 122, name: "Ginger", rarity: "Common", forBreed: [19]},
+    {id: 126, name: "Nudibranch", rarity: "Rare", forBreed: [19]},
+    {id: 129, name: "Okapi", rarity: "Uncommon", forBreed: [19]},
+    {id: 130, name: "Sailfin", rarity: "Rare", forBreed: [19]},
+    {id: 131, name: "Ghost", rarity: "Uncommon", forBreed: [19]},
+    {id: 133, name: "Filigree", rarity: "Rare", forBreed: [19]},
+    {id: 134, name: "Veined", rarity: "Limited", forBreed: [19]},
+    {id: 138, name: "Fern", rarity: "Limited", forBreed: [19]},
+    {id: 139, name: "Cherub", rarity: "Uncommon", forBreed: [19]},
+    {id: 140, name: "Toxin", rarity: "Limited", forBreed: [19]},
+    {id: 141, name: "Sludge", rarity: "Limited", forBreed: [19]},
+    {id: 142, name: "Clouded", rarity: "Common", forBreed: [19]},
+    {id: 143, name: "Freckle", rarity: "Common", forBreed: [19]},
+    {id: 144, name: "Butterfly", rarity: "Rare", forBreed: [19]},
+    {id: 145, name: "Daub", rarity: "Uncommon", forBreed: [19]},
+    {id: 146, name: "Facet", rarity: "Rare", forBreed: [19]},
+    {id: 169, name: "Brightshine", rarity: "Rare", forBreed: [19]},
+    {id: 236, name: "Boa", rarity: "Uncommon", forBreed: [19]},
+    {id: 290, name: "Myrid", rarity: "Limited", forBreed: [19]},
+    {id: 302, name: "Firebreather", rarity: "Limited", forBreed: [19]},
+    {id: 338, name: "Choir", rarity: "Uncommon", forBreed: [19]},
+    {id: 344, name: "Mosaic", rarity: "Uncommon", forBreed: [19]},
+    {id: 377, name: "Fissure", rarity: "Limited", forBreed: [19]},
+    {id: 383, name: "Rosette", rarity: "Uncommon", forBreed: [19]},
+    {id: 384, name: "Spire", rarity: "Rare", forBreed: [19]},
+    {id: 385, name: "Larvae", rarity: "Limited", forBreed: [19]},
+    {id: 392, name: "Contour", rarity: "Common", forBreed: [19]},
+    {id: 393, name: "Medusa", rarity: "Rare", forBreed: [19]},
+    {id: 394, name: "Smirch", rarity: "Limited", forBreed: [19]},
+    {id: 395, name: "Soap", rarity: "Rare", forBreed: [19]},
+    {id: 396, name: "Blossom", rarity: "Limited", forBreed: [19]},
+    {id: 409, name: "Loam", rarity: "Limited", forBreed: [19]},
+    {id: 420, name: "Gecko", rarity: "Uncommon", forBreed: [19]},
+    {id: 423, name: "Eclipse", rarity: "Rare", forBreed: [19]},
+    {id: 427, name: "Trickmurk", rarity: "Rare", forBreed: [19]},
+    {id: 453, name: "Varnish", rarity: "Common", forBreed: [19]}
+],
+    
+// Secondary genes with IDs and breed restrictions
+secondaryGenes: [
+    // Universal genes (available to all breeds)
+    {id: 0, name: "Basic", rarity: "Plentiful", forBreed: null},
+    {id: 42, name: "Blend", rarity: "Common", forBreed: null},
+    {id: 412, name: "Chess", rarity: "Common", forBreed: null},
+    {id: 40, name: "Clouded", rarity: "Common", forBreed: null},
+    {id: 26, name: "Edged", rarity: "Common", forBreed: null},
+    {id: 3, name: "Eye Spots", rarity: "Common", forBreed: null},
+    {id: 4, name: "Freckle", rarity: "Common", forBreed: null},
+    {id: 450, name: "Lacquer", rarity: "Common", forBreed: null},
+    {id: 57, name: "Marbled", rarity: "Common", forBreed: null},
+    {id: 9, name: "Paint", rarity: "Common", forBreed: null},
+    {id: 11, name: "Peregrine", rarity: "Common", forBreed: null},
+    {id: 18, name: "Safari", rarity: "Common", forBreed: null},
+    {id: 21, name: "Striation", rarity: "Common", forBreed: null},
+    {id: 2, name: "Stripes", rarity: "Common", forBreed: null},
+    {id: 213, name: "Blaze", rarity: "Uncommon", forBreed: null},
+    {id: 58, name: "Breakup", rarity: "Uncommon", forBreed: null},
+    {id: 337, name: "Choir", rarity: "Uncommon", forBreed: null},
+    {id: 6, name: "Current", rarity: "Uncommon", forBreed: null},
+    {id: 7, name: "Daub", rarity: "Uncommon", forBreed: null},
+    {id: 82, name: "Flair", rarity: "Uncommon", forBreed: null},
+    {id: 14, name: "Hex", rarity: "Uncommon", forBreed: null},
+    {id: 9, name: "Hypnotic", rarity: "Uncommon", forBreed: null},
+    {id: 84, name: "Noxtide", rarity: "Uncommon", forBreed: null},
+    {id: 10, name: "Rosette", rarity: "Uncommon", forBreed: null},
+    {id: 232, name: "Saddle", rarity: "Uncommon", forBreed: null},
+    {id: 25, name: "Saturn", rarity: "Uncommon", forBreed: null},
+    {id: 5, name: "Seraph", rarity: "Uncommon", forBreed: null},
+    {id: 411, name: "Affection", rarity: "Limited", forBreed: null},
+    {id: 136, name: "Fissure", rarity: "Limited", forBreed: null},
+    {id: 114, name: "Foam", rarity: "Limited", forBreed: null},
+    {id: 400, name: "Loam", rarity: "Limited", forBreed: null},
+    {id: 237, name: "Malachite", rarity: "Limited", forBreed: null},
+    {id: 23, name: "Morph", rarity: "Limited", forBreed: null},
+    {id: 110, name: "Myrid", rarity: "Limited", forBreed: null},
+    {id: 136, name: "Paisley", rarity: "Limited", forBreed: null},
+    {id: 59, name: "Patchwork", rarity: "Limited", forBreed: null},
+    {id: 41, name: "Sludge", rarity: "Limited", forBreed: null},
+    {id: 16, name: "Spinner", rarity: "Limited", forBreed: null},
+    {id: 11, name: "Toxin", rarity: "Limited", forBreed: null},
+    {id: 22, name: "Trail", rarity: "Limited", forBreed: null},
+    {id: 283, name: "Weaver", rarity: "Limited", forBreed: null},
+    {id: 17, name: "Alloy", rarity: "Rare", forBreed: null},
+    {id: 20, name: "Bee", rarity: "Rare", forBreed: null},
+    {id: 13, name: "Butterfly", rarity: "Rare", forBreed: null},
+    {id: 24, name: "Constellation", rarity: "Rare", forBreed: null},
+    {id: 8, name: "Facet", rarity: "Rare", forBreed: null},
+    {id: 170, name: "Jester", rarity: "Rare", forBreed: null},
+    {id: 318, name: "Lode", rarity: "Rare", forBreed: null},
+    {id: 87, name: "Sarcophagus", rarity: "Rare", forBreed: null},
+    {id: 1, name: "Shimmer", rarity: "Rare", forBreed: null},
+
+    // Breed-specific secondary genes
+    // Aberration (id: 20)
+    {id: 91, name: "Blend", rarity: "Common", forBreed: [20]},
+    {id: 112, name: "Flair", rarity: "Uncommon", forBreed: [20]},
+    {id: 105, name: "Eel", rarity: "Uncommon", forBreed: [20]},
+    {id: 107, name: "Patchwork", rarity: "Limited", forBreed: [20]},
+    {id: 341, name: "Breakup", rarity: "Uncommon", forBreed: [20]},
+    {id: 451, name: "Lacquer", rarity: "Common", forBreed: [20]},
+    {id: 214, name: "Blaze", rarity: "Uncommon", forBreed: [20]},
+    {id: 223, name: "Eye Spots", rarity: "Common", forBreed: [20]},
+    {id: 224, name: "Foam", rarity: "Limited", forBreed: [20]},
+    {id: 225, name: "Jester", rarity: "Rare", forBreed: [20]},
+    {id: 226, name: "Myrid", rarity: "Limited", forBreed: [20]},
+    {id: 227, name: "Toxin", rarity: "Limited", forBreed: [20]},
+    {id: 228, name: "Seraph", rarity: "Uncommon", forBreed: [20]},
+    {id: 229, name: "Spinner", rarity: "Limited", forBreed: [20]},
+    {id: 230, name: "Constellation", rarity: "Rare", forBreed: [20]},
+    {id: 231, name: "Tide", rarity: "Limited", forBreed: [20]},
+
+    // Aether (id: 22)
+    {id: 148, name: "Blend", rarity: "Common", forBreed: [22]},
+    {id: 149, name: "Flair", rarity: "Uncommon", forBreed: [22]},
+    {id: 155, name: "Breakup", rarity: "Uncommon", forBreed: [22]},
+    {id: 157, name: "Alloy", rarity: "Rare", forBreed: [22]},
+    {id: 158, name: "Lionfish", rarity: "Uncommon", forBreed: [22]},
+    {id: 159, name: "Paint", rarity: "Common", forBreed: [22]},
+    {id: 160, name: "Morph", rarity: "Limited", forBreed: [22]},
+    {id: 161, name: "Spinner", rarity: "Limited", forBreed: [22]},
+    {id: 162, name: "Thread", rarity: "Rare", forBreed: [22]},
+    {id: 163, name: "Blaze", rarity: "Uncommon", forBreed: [22]},
+    {id: 164, name: "Tide", rarity: "Limited", forBreed: [22]},
+    {id: 165, name: "Stitched", rarity: "Limited", forBreed: [22]},
+    {id: 166, name: "Flicker", rarity: "Rare", forBreed: [22]},
+    {id: 167, name: "Icing", rarity: "Rare", forBreed: [22]},
+    {id: 319, name: "Chess", rarity: "Common", forBreed: [22]},
+    {id: 320, name: "Chrysocolla", rarity: "Limited", forBreed: [22]},
+    {id: 321, name: "Diaphanous", rarity: "Rare", forBreed: [22]},
+    {id: 322, name: "Eel", rarity: "Uncommon", forBreed: [22]},
+    {id: 323, name: "Flecks", rarity: "Limited", forBreed: [22]},
+    {id: 324, name: "Fissure", rarity: "Limited", forBreed: [22]},
+    {id: 325, name: "Hex", rarity: "Uncommon", forBreed: [22]},
+    {id: 326, name: "Jester", rarity: "Rare", forBreed: [22]},
+    {id: 327, name: "Safari", rarity: "Common", forBreed: [22]},
+    {id: 328, name: "Striation", rarity: "Common", forBreed: [22]},
+    {id: 329, name: "Malachite", rarity: "Limited", forBreed: [22]},
+    {id: 330, name: "Porcupine", rarity: "Rare", forBreed: [22]},
+    {id: 331, name: "Peregrine", rarity: "Common", forBreed: [22]},
+    {id: 332, name: "Safari", rarity: "Common", forBreed: [22]},
+    {id: 333, name: "Striation", rarity: "Common", forBreed: [22]},
+    {id: 334, name: "Thylacine", rarity: "Common", forBreed: [22]},
+    {id: 335, name: "Spire", rarity: "Rare", forBreed: [22]},
+    {id: 336, name: "Sludge", rarity: "Limited", forBreed: [22]},
+
+    // Auraboa (id: 24)
+    {id: 238, name: "Boa", rarity: "Uncommon", forBreed: [24]},
+    {id: 239, name: "Saddle", rarity: "Uncommon", forBreed: [24]},
+    {id: 240, name: "Myrid", rarity: "Limited", forBreed: [24]},
+    {id: 241, name: "Larvae", rarity: "Limited", forBreed: [24]},
+    {id: 242, name: "Blend", rarity: "Common", forBreed: [24]},
+    {id: 243, name: "Peregrine", rarity: "Common", forBreed: [24]},
+    {id: 244, name: "Paisley", rarity: "Limited", forBreed: [24]},
+    {id: 245, name: "Flair", rarity: "Uncommon", forBreed: [24]},
+    {id: 246, name: "Hex", rarity: "Uncommon", forBreed: [24]},
+    {id: 247, name: "Jester", rarity: "Rare", forBreed: [24]},
+    {id: 248, name: "Rosette", rarity: "Uncommon", forBreed: [24]},
+    {id: 249, name: "Edged", rarity: "Common", forBreed: [24]},
+    {id: 250, name: "Alloy", rarity: "Rare", forBreed: [24]},
+    {id: 251, name: "Riopa", rarity: "Rare", forBreed: [24]},
+    {id: 252, name: "Breakup", rarity: "Uncommon", forBreed: [24]},
+    {id: 253, name: "Weaver", rarity: "Limited", forBreed: [24]},
+    {id: 254, name: "Paint", rarity: "Common", forBreed: [24]},
+    {id: 255, name: "Morph", rarity: "Limited", forBreed: [24]},
+    {id: 256, name: "Diamondback", rarity: "Rare", forBreed: [24]},
+    {id: 257, name: "Current", rarity: "Uncommon", forBreed: [24]},
+    {id: 258, name: "Striation", rarity: "Common", forBreed: [24]},
+    {id: 259, name: "Stripes", rarity: "Common", forBreed: [24]},
+    {id: 260, name: "Hypnotic", rarity: "Uncommon", forBreed: [24]},
+    {id: 261, name: "Lacquer", rarity: "Common", forBreed: [24]},
+    {id: 262, name: "Woven", rarity: "Rare", forBreed: [24]},
+    {id: 279, name: "Affection", rarity: "Limited", forBreed: [24]},
+    {id: 308, name: "Greenskeeper", rarity: "Limited", forBreed: [24]},
+
+    // Banescale (id: 18)
+    {id: 43, name: "Seraph", rarity: "Uncommon", forBreed: [18]},
+    {id: 44, name: "Rosette", rarity: "Uncommon", forBreed: [18]},
+    {id: 45, name: "Trail", rarity: "Limited", forBreed: [18]},
+    {id: 46, name: "Stripes", rarity: "Common", forBreed: [18]},
+    {id: 47, name: "Mottle", rarity: "Rare", forBreed: [18]},
+    {id: 48, name: "Edged", rarity: "Common", forBreed: [18]},
+    {id: 49, name: "Alloy", rarity: "Rare", forBreed: [18]},
+    {id: 50, name: "Crackle", rarity: "Uncommon", forBreed: [18]},
+    {id: 51, name: "Butterfly", rarity: "Rare", forBreed: [18]},
+    {id: 52, name: "Spinner", rarity: "Limited", forBreed: [18]},
+    {id: 53, name: "Toxin", rarity: "Limited", forBreed: [18]},
+    {id: 80, name: "Peregrine", rarity: "Common", forBreed: [18]},
+    {id: 81, name: "Hex", rarity: "Uncommon", forBreed: [18]},
+    {id: 85, name: "Blend", rarity: "Common", forBreed: [18]},
+    {id: 86, name: "Facet", rarity: "Rare", forBreed: [18]},
+    {id: 111, name: "Flair", rarity: "Uncommon", forBreed: [18]},
+    {id: 180, name: "Clouded", rarity: "Common", forBreed: [18]},
+    {id: 215, name: "Blaze", rarity: "Uncommon", forBreed: [18]},
+    {id: 235, name: "Saddle", rarity: "Uncommon", forBreed: [18]},
+
+    // Cirrus (id: 27)
+    {id: 418, name: "Carousel", rarity: "Rare", forBreed: [27]},
+    {id: 419, name: "Seraph", rarity: "Uncommon", forBreed: [27]},
+    {id: 420, name: "Choir", rarity: "Uncommon", forBreed: [27]},
+    {id: 421, name: "Blaze", rarity: "Uncommon", forBreed: [27]},
+    {id: 422, name: "Blend", rarity: "Common", forBreed: [27]},
+    {id: 423, name: "Flair", rarity: "Uncommon", forBreed: [27]},
+    {id: 426, name: "Dye", rarity: "Limited", forBreed: [27]},
+    {id: 427, name: "Jester", rarity: "Rare", forBreed: [27]},
+    {id: 428, name: "Paint", rarity: "Common", forBreed: [27]},
+    {id: 429, name: "Alloy", rarity: "Rare", forBreed: [27]},
+    {id: 430, name: "Morph", rarity: "Limited", forBreed: [27]},
+    {id: 431, name: "Ragged", rarity: "Limited", forBreed: [27]},
+    {id: 432, name: "Ripple", rarity: "Uncommon", forBreed: [27]},
+    {id: 433, name: "Bee", rarity: "Rare", forBreed: [27]},
+    {id: 434, name: "Hypnotic", rarity: "Uncommon", forBreed: [27]},
+    {id: 435, name: "Lacquer", rarity: "Common", forBreed: [27]},
+    {id: 436, name: "Stripes", rarity: "Common", forBreed: [27]},
+    {id: 437, name: "Spinner", rarity: "Limited", forBreed: [27]},
+    {id: 438, name: "Loam", rarity: "Limited", forBreed: [27]},
+    {id: 439, name: "Roan", rarity: "Uncommon", forBreed: [27]},
+    {id: 440, name: "Chess", rarity: "Common", forBreed: [27]},
+    {id: 441, name: "Spinner", rarity: "Limited", forBreed: [27]},
+    {id: 463, name: "Greenskeeper", rarity: "Limited", forBreed: [27]},
+
+    // Dusthide (id: 25)
+    {id: 292, name: "Daub", rarity: "Uncommon", forBreed: [25]},
+    {id: 293, name: "Chess", rarity: "Common", forBreed: [25]},
+    {id: 295, name: "Blaze", rarity: "Uncommon", forBreed: [25]},
+    {id: 296, name: "Blend", rarity: "Common", forBreed: [25]},
+    {id: 297, name: "Hex", rarity: "Uncommon", forBreed: [25]},
+    {id: 298, name: "Fissure", rarity: "Limited", forBreed: [25]},
+    {id: 299, name: "Jester", rarity: "Rare", forBreed: [25]},
+    {id: 310, name: "Bee", rarity: "Rare", forBreed: [25]},
+    {id: 311, name: "Eel", rarity: "Uncommon", forBreed: [25]},
+    {id: 316, name: "Lacquer", rarity: "Common", forBreed: [25]},
+    {id: 343, name: "Breakup", rarity: "Uncommon", forBreed: [25]},
+
+    // Everlux (id: 26)
+    {id: 347, name: "Blend", rarity: "Common", forBreed: [26]},
+    {id: 348, name: "Daub", rarity: "Uncommon", forBreed: [26]},
+    {id: 349, name: "Facet", rarity: "Rare", forBreed: [26]},
+    {id: 350, name: "Flair", rarity: "Uncommon", forBreed: [26]},
+    {id: 351, name: "Larvae", rarity: "Limited", forBreed: [26]},
+    {id: 352, name: "Malachite", rarity: "Limited", forBreed: [26]},
+    {id: 353, name: "Seraph", rarity: "Uncommon", forBreed: [26]},
+    {id: 354, name: "Fishbone", rarity: "Limited", forBreed: [26]},
+    {id: 355, name: "Edged", rarity: "Common", forBreed: [26]},
+    {id: 356, name: "Mottle", rarity: "Rare", forBreed: [26]},
+    {id: 357, name: "Noxtide", rarity: "Uncommon", forBreed: [26]},
+    {id: 358, name: "Saturn", rarity: "Uncommon", forBreed: [26]},
+    {id: 359, name: "Butterfly", rarity: "Rare", forBreed: [26]},
+    {id: 360, name: "Lode", rarity: "Rare", forBreed: [26]},
+    {id: 361, name: "Eclosion", rarity: "Rare", forBreed: [26]},
+    {id: 362, name: "Morph", rarity: "Limited", forBreed: [26]},
+    {id: 363, name: "Sarcophagus", rarity: "Rare", forBreed: [26]},
+    {id: 364, name: "Swallowtail", rarity: "Rare", forBreed: [26]},
+    {id: 365, name: "Pinstripe", rarity: "Limited", forBreed: [26]},
+    {id: 366, name: "Current", rarity: "Uncommon", forBreed: [26]},
+    {id: 367, name: "Spinner", rarity: "Limited", forBreed: [26]},
+    {id: 368, name: "Trail", rarity: "Limited", forBreed: [26]},
+    {id: 369, name: "Hawkmoth", rarity: "Rare", forBreed: [26]},
+    {id: 370, name: "Sludge", rarity: "Limited", forBreed: [26]},
+    {id: 371, name: "Coil", rarity: "Limited", forBreed: [26]},
+    {id: 372, name: "Constellation", rarity: "Rare", forBreed: [26]},
+    {id: 373, name: "Foam", rarity: "Limited", forBreed: [26]},
+    {id: 374, name: "Stripes", rarity: "Common", forBreed: [26]},
+    {id: 375, name: "Toxin", rarity: "Limited", forBreed: [26]},
+    {id: 376, name: "Lacquer", rarity: "Common", forBreed: [26]},
+    {id: 432, name: "Wavecrest", rarity: "Limited", forBreed: [26]},
+
+    // Gaoler (id: 17)
+    {id: 27, name: "Hex", rarity: "Uncommon", forBreed: [17]},
+    {id: 28, name: "Bee", rarity: "Rare", forBreed: [17]},
+    {id: 30, name: "Peregrine", rarity: "Common", forBreed: [17]},
+    {id: 31, name: "Paint", rarity: "Common", forBreed: [17]},
+    {id: 32, name: "Trail", rarity: "Limited", forBreed: [17]},
+    {id: 33, name: "Rosette", rarity: "Uncommon", forBreed: [17]},
+    {id: 34, name: "Daub", rarity: "Uncommon", forBreed: [17]},
+    {id: 35, name: "Striation", rarity: "Common", forBreed: [17]},
+    {id: 73, name: "Edged", rarity: "Common", forBreed: [17]},
+    {id: 78, name: "Current", rarity: "Uncommon", forBreed: [17]},
+    {id: 86, name: "Blend", rarity: "Common", forBreed: [17]},
+    {id: 111, name: "Flair", rarity: "Uncommon", forBreed: [17]},
+    {id: 157, name: "Contour", rarity: "Common", forBreed: [17]},
+    {id: 171, name: "Saddle", rarity: "Uncommon", forBreed: [17]},
+    {id: 174, name: "Eel", rarity: "Uncommon", forBreed: [17]},
+    {id: 175, name: "Safari", rarity: "Common", forBreed: [17]},
+    {id: 176, name: "Spinner", rarity: "Limited", forBreed: [17]},
+    {id: 177, name: "Sludge", rarity: "Limited", forBreed: [17]},
+    {id: 178, name: "Marbled", rarity: "Common", forBreed: [17]},
+    {id: 179, name: "Stitched", rarity: "Limited", forBreed: [17]},
+    {id: 180, name: "Clouded", rarity: "Common", forBreed: [17]},
+    {id: 216, name: "Blaze", rarity: "Uncommon", forBreed: [17]},
+
+    // Sandsurge (id: 23)
+    {id: 186, name: "Fissure", rarity: "Limited", forBreed: [23]},
+    {id: 188, name: "Myrid", rarity: "Limited", forBreed: [23]},
+    {id: 189, name: "Branches", rarity: "Limited", forBreed: [23]},
+    {id: 190, name: "Seraph", rarity: "Uncommon", forBreed: [23]},
+    {id: 191, name: "Blend", rarity: "Common", forBreed: [23]},
+    {id: 192, name: "Jester", rarity: "Rare", forBreed: [23]},
+    {id: 193, name: "Flair", rarity: "Uncommon", forBreed: [23]},
+    {id: 195, name: "Malachite", rarity: "Limited", forBreed: [23]},
+    {id: 197, name: "Saturn", rarity: "Uncommon", forBreed: [23]},
+    {id: 198, name: "Rosette", rarity: "Uncommon", forBreed: [23]},
+    {id: 199, name: "Noxtide", rarity: "Uncommon", forBreed: [23]},
+    {id: 201, name: "Paint", rarity: "Common", forBreed: [23]},
+    {id: 202, name: "Trail", rarity: "Limited", forBreed: [23]},
+    {id: 203, name: "Morph", rarity: "Limited", forBreed: [23]},
+    {id: 204, name: "Safari", rarity: "Common", forBreed: [23]},
+    {id: 207, name: "Bee", rarity: "Rare", forBreed: [23]},
+    {id: 208, name: "Sludge", rarity: "Limited", forBreed: [23]},
+    {id: 209, name: "Marbled", rarity: "Common", forBreed: [23]},
+    {id: 210, name: "Striation", rarity: "Common", forBreed: [23]},
+    {id: 211, name: "Stripes", rarity: "Common", forBreed: [23]},
+    {id: 212, name: "Marlin", rarity: "Limited", forBreed: [23]},
+    {id: 217, name: "Blaze", rarity: "Uncommon", forBreed: [23]},
+    {id: 442, name: "Lacquer", rarity: "Common", forBreed: [23]},
+
+    // Undertide (id: 21)
+    {id: 113, name: "Foam", rarity: "Limited", forBreed: [21]},
+    {id: 114, name: "Tide", rarity: "Limited", forBreed: [21]},
+    {id: 115, name: "Blend", rarity: "Common", forBreed: [21]},
+    {id: 117, name: "Circuit", rarity: "Rare", forBreed: [21]},
+    {id: 118, name: "Facet", rarity: "Rare", forBreed: [21]},
+    {id: 119, name: "Seraph", rarity: "Uncommon", forBreed: [21]},
+    {id: 120, name: "Sarcophagus", rarity: "Rare", forBreed: [21]},
+    {id: 121, name: "Trail", rarity: "Limited", forBreed: [21]},
+    {id: 122, name: "Peregrine", rarity: "Common", forBreed: [21]},
+    {id: 123, name: "Gembond", rarity: "Uncommon", forBreed: [21]},
+    {id: 124, name: "Soap", rarity: "Rare", forBreed: [21]},
+    {id: 125, name: "Bee", rarity: "Rare", forBreed: [21]},
+    {id: 126, name: "Noxtide", rarity: "Uncommon", forBreed: [21]},
+    {id: 127, name: "Chess", rarity: "Common", forBreed: [21]},
+    {id: 128, name: "Saddle", rarity: "Uncommon", forBreed: [21]},
+    {id: 129, name: "Safari", rarity: "Common", forBreed: [21]},
+    {id: 130, name: "Current", rarity: "Uncommon", forBreed: [21]},
+    {id: 131, name: "Toxin", rarity: "Limited", forBreed: [21]},
+    {id: 132, name: "Freckle", rarity: "Common", forBreed: [21]},
+    {id: 170, name: "Brightshine", rarity: "Rare", forBreed: [21]},
+    {id: 172, name: "Foam", rarity: "Limited", forBreed: [21]},
+    {id: 246, name: "Angler", rarity: "Limited", forBreed: [21]},
+    {id: 247, name: "Opal", rarity: "Rare", forBreed: [21]},
+    {id: 248, name: "Branches", rarity: "Limited", forBreed: [21]},
+    {id: 249, name: "Contour", rarity: "Common", forBreed: [21]},
+    {id: 250, name: "Crest", rarity: "Limited", forBreed: [21]},
+    {id: 251, name: "Fans", rarity: "Uncommon", forBreed: [21]},
+    {id: 252, name: "Firebreather", rarity: "Limited", forBreed: [21]},
+    {id: 253, name: "Firefly", rarity: "Limited", forBreed: [21]},
+    {id: 254, name: "Koi", rarity: "Rare", forBreed: [21]},
+    {id: 255, name: "Medusa", rarity: "Rare", forBreed: [21]},
+    {id: 256, name: "Porcupine", rarity: "Rare", forBreed: [21]},
+    {id: 257, name: "Scales", rarity: "Limited", forBreed: [21]},
+    {id: 258, name: "Shark", rarity: "Limited", forBreed: [21]},
+    {id: 259, name: "Smirch", rarity: "Limited", forBreed: [21]},
+    {id: 260, name: "Smoke", rarity: "Uncommon", forBreed: [21]},
+    {id: 261, name: "Spines", rarity: "Uncommon", forBreed: [21]},
+    {id: 262, name: "Stinger", rarity: "Limited", forBreed: [21]},
+    {id: 263, name: "Thorns", rarity: "Limited", forBreed: [21]},
+    {id: 264, name: "Malachite", rarity: "Limited", forBreed: [21]},
+    {id: 272, name: "Paint", rarity: "Common", forBreed: [21]},
+    {id: 273, name: "Constellation", rarity: "Rare", forBreed: [21]},
+    {id: 274, name: "Striation", rarity: "Common", forBreed: [21]},
+    {id: 275, name: "Stripes", rarity: "Common", forBreed: [21]},
+    {id: 276, name: "Lacquer", rarity: "Common", forBreed: [21]},
+    {id: 277, name: "Spire", rarity: "Rare", forBreed: [21]},
+    {id: 278, name: "Alloy", rarity: "Rare", forBreed: [21]},
+    {id: 280, name: "Patchwork", rarity: "Limited", forBreed: [21]},
+    {id: 281, name: "Butterfly", rarity: "Rare", forBreed: [21]},
+    {id: 282, name: "Jester", rarity: "Rare", forBreed: [21]},
+    {id: 464, name: "Greenskeeper", rarity: "Limited", forBreed: [21]},
+
+    // Veilspun (id: 19)
+    {id: 60, name: "Blend", rarity: "Common", forBreed: [19]},
+    {id: 61, name: "Firefly", rarity: "Limited", forBreed: [19]},
+    {id: 62, name: "Edged", rarity: "Common", forBreed: [19]},
+    {id: 63, name: "Striation", rarity: "Common", forBreed: [19]},
+    {id: 64, name: "Hypnotic", rarity: "Uncommon", forBreed: [19]},
+    {id: 65, name: "Beetle", rarity: "Limited", forBreed: [19]},
+    {id: 66, name: "Constellation", rarity: "Rare", forBreed: [19]},
+    {id: 67, name: "Patchwork", rarity: "Limited", forBreed: [19]},
+    {id: 68, name: "Spinner", rarity: "Limited", forBreed: [19]},
+    {id: 69, name: "Vivid", rarity: "Rare", forBreed: [19]},
+    {id: 70, name: "Loop", rarity: "Uncommon", forBreed: [19]},
+    {id: 108, name: "Koi", rarity: "Rare", forBreed: [19]},
+    {id: 109, name: "Underbelly", rarity: "Common", forBreed: [19]},
+    {id: 110, name: "Stained", rarity: "Rare", forBreed: [19]},
+    {id: 112, name: "Flecks", rarity: "Limited", forBreed: [19]},
+    {id: 113, name: "Veined", rarity: "Limited", forBreed: [19]},
+    {id: 121, name: "Ghost", rarity: "Uncommon", forBreed: [19]},
+    {id: 126, name: "Nudibranch", rarity: "Rare", forBreed: [19]},
+    {id: 129, name: "Okapi", rarity: "Uncommon", forBreed: [19]},
+    {id: 130, name: "Sailfin", rarity: "Rare", forBreed: [19]},
+    {id: 131, name: "Ghost", rarity: "Uncommon", forBreed: [19]},
+    {id: 133, name: "Filigree", rarity: "Rare", forBreed: [19]},
+    {id: 134, name: "Veined", rarity: "Limited", forBreed: [19]},
+    {id: 138, name: "Paisley", rarity: "Limited", forBreed: [19]},
+    {id: 139, name: "Seraph", rarity: "Uncommon", forBreed: [19]},
+    {id: 140, name: "Toxin", rarity: "Limited", forBreed: [19]},
+    {id: 141, name: "Sludge", rarity: "Limited", forBreed: [19]},
+    {id: 142, name: "Clouded", rarity: "Common", forBreed: [19]},
+    {id: 143, name: "Freckle", rarity: "Common", forBreed: [19]},
+    {id: 144, name: "Butterfly", rarity: "Rare", forBreed: [19]},
+    {id: 145, name: "Daub", rarity: "Uncommon", forBreed: [19]},
+    {id: 146, name: "Facet", rarity: "Rare", forBreed: [19]},
+    {id: 169, name: "Brightshine", rarity: "Rare", forBreed: [19]},
+    {id: 236, name: "Saddle", rarity: "Uncommon", forBreed: [19]},
+    {id: 290, name: "Myrid", rarity: "Limited", forBreed: [19]},
+    {id: 302, name: "Firebreather", rarity: "Limited", forBreed: [19]},
+    {id: 338, name: "Choir", rarity: "Uncommon", forBreed: [19]},
+    {id: 344, name: "Breakup", rarity: "Uncommon", forBreed: [19]},
+    {id: 383, name: "Rosette", rarity: "Uncommon", forBreed: [19]},
+    {id: 384, name: "Spire", rarity: "Rare", forBreed: [19]},
+    {id: 385, name: "Larvae", rarity: "Limited", forBreed: [19]},
+    {id: 409, name: "Loam", rarity: "Limited", forBreed: [19]},
+    {id: 420, name: "Gecko", rarity: "Uncommon", forBreed: [19]},
+    {id: 423, name: "Eclipse", rarity: "Rare", forBreed: [19]},
+    {id: 453, name: "Lacquer", rarity: "Common", forBreed: [19]}
+],
+    
+// Tertiary genes with IDs and breed restrictions
+tertiaryGenes: [
+    // Universal genes (available to all breeds)
+    {id: 0, name: "Basic", rarity: "Plentiful", forBreed: null},
+    {id: 13, name: "Contour", rarity: "Common", forBreed: null},
+    {id: 24, name: "Peacock", rarity: "Common", forBreed: null},
+    {id: 107, name: "Points", rarity: "Common", forBreed: null},
+    {id: 11, name: "Thylacine", rarity: "Common", forBreed: null},
+    {id: 5, name: "Underbelly", rarity: "Common", forBreed: null},
+    {id: 6, name: "Crackle", rarity: "Uncommon", forBreed: null},
+    {id: 411, name: "Gecko", rarity: "Uncommon", forBreed: null},
+    {id: 4, name: "Gembond", rarity: "Uncommon", forBreed: null},
+    {id: 20, name: "Ghost", rarity: "Uncommon", forBreed: null},
+    {id: 16, name: "Lace", rarity: "Uncommon", forBreed: null},
+    {id: 9, name: "Okapi", rarity: "Uncommon", forBreed: null},
+    {id: 14, name: "Ringlets", rarity: "Uncommon", forBreed: null},
+    {id: 2, name: "Runes", rarity: "Uncommon", forBreed: null},
+    {id: 7, name: "Smoke", rarity: "Uncommon", forBreed: null},
+    {id: 97, name: "Sparkle", rarity: "Uncommon", forBreed: null},
+    {id: 8, name: "Spines", rarity: "Uncommon", forBreed: null},
+    {id: 18, name: "Capsule", rarity: "Limited", forBreed: null},
+    {id: 161, name: "Firebreather", rarity: "Limited", forBreed: null},
+    {id: 22, name: "Firefly", rarity: "Limited", forBreed: null},
+    {id: 103, name: "Flecks", rarity: "Limited", forBreed: null},
+    {id: 53, name: "Keel", rarity: "Limited", forBreed: null},
+    {id: 168, name: "Polkadot", rarity: "Limited", forBreed: null},
+    {id: 15, name: "Scales", rarity: "Limited", forBreed: null},
+    {id: 19, name: "Smirch", rarity: "Limited", forBreed: null},
+    {id: 38, name: "Veined", rarity: "Limited", forBreed: null},
+    {id: 1, name: "Circuit", rarity: "Rare", forBreed: null},
+    {id: 421, name: "Eclipse", rarity: "Rare", forBreed: null},
+    {id: 21, name: "Filigree", rarity: "Rare", forBreed: null},
+    {id: 10, name: "Glimmer", rarity: "Rare", forBreed: null},
+    {id: 54, name: "Glowtail", rarity: "Rare", forBreed: null},
+    {id: 73, name: "Koi", rarity: "Rare", forBreed: null},
+    {id: 17, name: "Opal", rarity: "Rare", forBreed: null},
+    {id: 105, name: "Soap", rarity: "Rare", forBreed: null},
+    {id: 12, name: "Stained", rarity: "Rare", forBreed: null},
+    {id: 15, name: "Wish", rarity: "Rare", forBreed: null},
+
+    // Breed-specific tertiary genes
+    // Aberration (id: 20)
+    {id: 83, name: "Capsule", rarity: "Limited", forBreed: [20]},
+    {id: 84, name: "Fangs", rarity: "Limited", forBreed: [20]},
+    {id: 86, name: "Frills", rarity: "Limited", forBreed: [20]},
+    {id: 87, name: "Jewels", rarity: "Rare", forBreed: [20]},
+    {id: 88, name: "Ghost", rarity: "Uncommon", forBreed: [20]},
+    {id: 89, name: "Glowtail", rarity: "Rare", forBreed: [20]},
+    {id: 90, name: "Peacock", rarity: "Common", forBreed: [20]},
+    {id: 92, name: "Scales", rarity: "Limited", forBreed: [20]},
+    {id: 198, name: "Augment", rarity: "Rare", forBreed: [20]},
+    {id: 199, name: "Braids", rarity: "Limited", forBreed: [20]},
+    {id: 200, name: "Fans", rarity: "Uncommon", forBreed: [20]},
+    {id: 201, name: "Fans", rarity: "Uncommon", forBreed: [20]},
+    {id: 202, name: "Firebreather", rarity: "Limited", forBreed: [20]},
+    {id: 203, name: "Koi", rarity: "Rare", forBreed: [20]},
+    {id: 204, name: "Skeletal", rarity: "Limited", forBreed: [20]},
+    {id: 205, name: "Smirch", rarity: "Limited", forBreed: [20]},
+    {id: 206, name: "Spines", rarity: "Uncommon", forBreed: [20]},
+    {id: 207, name: "Stained", rarity: "Rare", forBreed: [20]},
+    {id: 208, name: "Thorns", rarity: "Limited", forBreed: [20]},
+    {id: 311, name: "Thundercrack", rarity: "Rare", forBreed: [20]},
+    {id: 399, name: "Blossom", rarity: "Limited", forBreed: [20]},
+    {id: 430, name: "Medusa", rarity: "Rare", forBreed: [20]},
+
+    // Aether (id: 22)
+    {id: 135, name: "Circuit", rarity: "Rare", forBreed: [22]},
+    {id: 136, name: "Contour", rarity: "Common", forBreed: [22]},
+    {id: 138, name: "Glowtail", rarity: "Rare", forBreed: [22]},
+    {id: 139, name: "Keel", rarity: "Limited", forBreed: [22]},
+    {id: 140, name: "Monarch", rarity: "Rare", forBreed: [22]},
+    {id: 141, name: "Flutter", rarity: "Rare", forBreed: [22]},
+    {id: 142, name: "Lace", rarity: "Uncommon", forBreed: [22]},
+    {id: 143, name: "Mandibles", rarity: "Limited", forBreed: [22]},
+    {id: 144, name: "Underbelly", rarity: "Common", forBreed: [22]},
+    {id: 145, name: "Stained", rarity: "Rare", forBreed: [22]},
+    {id: 146, name: "Runes", rarity: "Uncommon", forBreed: [22]},
+    {id: 147, name: "Scales", rarity: "Limited", forBreed: [22]},
+    {id: 148, name: "Stinger", rarity: "Limited", forBreed: [22]},
+    {id: 149, name: "Space", rarity: "Rare", forBreed: [22]},
+    {id: 150, name: "Smirch", rarity: "Limited", forBreed: [22]},
+    {id: 151, name: "Smoke", rarity: "Uncommon", forBreed: [22]},
+    {id: 152, name: "Sparkle", rarity: "Uncommon", forBreed: [22]},
+    {id: 153, name: "Spines", rarity: "Uncommon", forBreed: [22]},
+    {id: 154, name: "Whiskers", rarity: "Limited", forBreed: [22]},
+    {id: 155, name: "Wish", rarity: "Rare", forBreed: [22]},
+    {id: 156, name: "Angler", rarity: "Limited", forBreed: [22]},
+    {id: 209, name: "Starfall", rarity: "Rare", forBreed: [22]},
+    {id: 306, name: "Firebreather", rarity: "Limited", forBreed: [22]},
+    {id: 316, name: "Angler", rarity: "Limited", forBreed: [22]},
+    {id: 317, name: "Braids", rarity: "Limited", forBreed: [22]},
+    {id: 318, name: "Branches", rarity: "Limited", forBreed: [22]},
+    {id: 319, name: "Capsule", rarity: "Limited", forBreed: [22]},
+    {id: 320, name: "Crackle", rarity: "Uncommon", forBreed: [22]},
+    {id: 321, name: "Diaphanous", rarity: "Rare", forBreed: [22]},
+    {id: 322, name: "Fans", rarity: "Uncommon", forBreed: [22]},
+    {id: 323, name: "Flecks", rarity: "Limited", forBreed: [22]},
+    {id: 324, name: "Ghost", rarity: "Uncommon", forBreed: [22]},
+    {id: 325, name: "Koi", rarity: "Rare", forBreed: [22]},
+    {id: 326, name: "Medusa", rarity: "Rare", forBreed: [22]},
+    {id: 327, name: "Nudibranch", rarity: "Rare", forBreed: [22]},
+    {id: 328, name: "Firefly", rarity: "Limited", forBreed: [22]},
+    {id: 329, name: "Ornaments", rarity: "Limited", forBreed: [22]},
+    {id: 330, name: "Porcupine", rarity: "Rare", forBreed: [22]},
+    {id: 331, name: "Sailfin", rarity: "Rare", forBreed: [22]},
+    {id: 332, name: "Spores", rarity: "Uncommon", forBreed: [22]},
+    {id: 333, name: "Thorns", rarity: "Limited", forBreed: [22]},
+    {id: 334, name: "Thylacine", rarity: "Common", forBreed: [22]},
+    {id: 335, name: "Veined", rarity: "Limited", forBreed: [22]},
+    {id: 336, name: "Fishbone", rarity: "Limited", forBreed: [22]},
+    {id: 337, name: "Fishbone", rarity: "Limited", forBreed: [22]},
+    {id: 338, name: "Soap", rarity: "Rare", forBreed: [22]},
+    {id: 339, name: "Tentacles", rarity: "Limited", forBreed: [22]},
+    {id: 340, name: "Flameforger", rarity: "Rare", forBreed: [22]},
+    {id: 428, name: "Mistral", rarity: "Rare", forBreed: [22]},
+
+    // Auraboa (id: 24)
+    {id: 214, name: "Batty", rarity: "Limited", forBreed: [24]},
+    {id: 215, name: "Crest", rarity: "Limited", forBreed: [24]},
+    {id: 216, name: "Fishbone", rarity: "Limited", forBreed: [24]},
+    {id: 217, name: "Branches", rarity: "Limited", forBreed: [24]},
+    {id: 218, name: "Medusa", rarity: "Rare", forBreed: [24]},
+    {id: 219, name: "Paradise", rarity: "Rare", forBreed: [24]},
+    {id: 220, name: "Plumage", rarity: "Limited", forBreed: [24]},
+    {id: 221, name: "Porcupine", rarity: "Rare", forBreed: [24]},
+    {id: 222, name: "Sailfin", rarity: "Rare", forBreed: [24]},
+    {id: 223, name: "Skuttle", rarity: "Limited", forBreed: [24]},
+    {id: 224, name: "Stinger", rarity: "Limited", forBreed: [24]},
+    {id: 225, name: "Terracotta", rarity: "Limited", forBreed: [24]},
+    {id: 226, name: "Thorns", rarity: "Limited", forBreed: [24]},
+    {id: 227, name: "Willow", rarity: "Uncommon", forBreed: [24]},
+    {id: 228, name: "Underbelly", rarity: "Common", forBreed: [24]},
+    {id: 229, name: "Capsule", rarity: "Limited", forBreed: [24]},
+    {id: 230, name: "Contour", rarity: "Common", forBreed: [24]},
+    {id: 231, name: "Crackle", rarity: "Uncommon", forBreed: [24]},
+    {id: 232, name: "Firefly", rarity: "Limited", forBreed: [24]},
+    {id: 233, name: "Firebreather", rarity: "Limited", forBreed: [24]},
+    {id: 234, name: "Keel", rarity: "Limited", forBreed: [24]},
+    {id: 235, name: "Koi", rarity: "Rare", forBreed: [24]},
+    {id: 236, name: "Opal", rarity: "Rare", forBreed: [24]},
+    {id: 237, name: "Peacock", rarity: "Common", forBreed: [24]},
+    {id: 238, name: "Polkadot", rarity: "Limited", forBreed: [24]},
+    {id: 239, name: "Scales", rarity: "Limited", forBreed: [24]},
+    {id: 240, name: "Smoke", rarity: "Uncommon", forBreed: [24]},
+    {id: 241, name: "Spines", rarity: "Uncommon", forBreed: [24]},
+    {id: 242, name: "Stained", rarity: "Rare", forBreed: [24]},
+    {id: 243, name: "Topcoat", rarity: "Limited", forBreed: [24]},
+    {id: 244, name: "Rockbreaker", rarity: "Rare", forBreed: [24]},
+    {id: 308, name: "Greenskeeper", rarity: "Limited", forBreed: [24]},
+    {id: 342, name: "Starfall", rarity: "Rare", forBreed: [24]},
+    {id: 478, name: "Warrior", rarity: "Rare", forBreed: [24]},
+
+    // Banescale (id: 18)
+    {id: 41, name: "Fans", rarity: "Uncommon", forBreed: [18]},
+    {id: 44, name: "Lace", rarity: "Uncommon", forBreed: [18]},
+    {id: 45, name: "Skeletal", rarity: "Limited", forBreed: [18]},
+    {id: 46, name: "Contour", rarity: "Common", forBreed: [18]},
+    {id: 47, name: "Ghost", rarity: "Uncommon", forBreed: [18]},
+    {id: 49, name: "Porcupine", rarity: "Rare", forBreed: [18]},
+    {id: 50, name: "Crackle", rarity: "Uncommon", forBreed: [18]},
+    {id: 51, name: "Plumage", rarity: "Limited", forBreed: [18]},
+    {id: 52, name: "Underbelly", rarity: "Common", forBreed: [18]},
+    {id: 74, name: "Capsule", rarity: "Limited", forBreed: [18]},
+    {id: 106, name: "Clay", rarity: "Common", forBreed: [18]},
+    {id: 158, name: "Monarch", rarity: "Rare", forBreed: [18]},
+    {id: 159, name: "Soap", rarity: "Rare", forBreed: [18]},
+    {id: 160, name: "Spines", rarity: "Uncommon", forBreed: [18]},
+    {id: 196, name: "Flameforger", rarity: "Rare", forBreed: [18]},
+    {id: 304, name: "Firebreather", rarity: "Limited", forBreed: [18]},
+    {id: 344, name: "Thorns", rarity: "Limited", forBreed: [18]},
+    {id: 426, name: "Trickmurk", rarity: "Rare", forBreed: [18]},
+
+    // Cirrus (id: 27)
+    {id: 435, name: "Blossom", rarity: "Limited", forBreed: [27]},
+    {id: 436, name: "Braids", rarity: "Limited", forBreed: [27]},
+    {id: 437, name: "Coral", rarity: "Limited", forBreed: [27]},
+    {id: 438, name: "Crackle", rarity: "Uncommon", forBreed: [27]},
+    {id: 439, name: "Eclipse", rarity: "Rare", forBreed: [27]},
+    {id: 440, name: "Deco", rarity: "Rare", forBreed: [27]},
+    {id: 441, name: "Flames", rarity: "Limited", forBreed: [27]},
+    {id: 442, name: "Ghost", rarity: "Uncommon", forBreed: [27]},
+    {id: 443, name: "Glitch", rarity: "Rare", forBreed: [27]},
+    {id: 444, name: "Gnarlhorns", rarity: "Limited", forBreed: [27]},
+    {id: 445, name: "Kumo", rarity: "Limited", forBreed: [27]},
+    {id: 446, name: "Medusa", rarity: "Rare", forBreed: [27]},
+    {id: 447, name: "Okapi", rarity: "Uncommon", forBreed: [27]},
+    {id: 448, name: "Mist", rarity: "Uncommon", forBreed: [27]},
+    {id: 449, name: "Paradise", rarity: "Rare", forBreed: [27]},
+    {id: 450, name: "Peacock", rarity: "Common", forBreed: [27]},
+    {id: 451, name: "Polypore", rarity: "Limited", forBreed: [27]},
+    {id: 452, name: "Sailfin", rarity: "Rare", forBreed: [27]},
+    {id: 453, name: "Skeletal", rarity: "Limited", forBreed: [27]},
+    {id: 454, name: "Spectre", rarity: "Rare", forBreed: [27]},
+    {id: 455, name: "Thorns", rarity: "Limited", forBreed: [27]},
+    {id: 456, name: "Topscale", rarity: "Rare", forBreed: [27]},
+    {id: 457, name: "Willow", rarity: "Uncommon", forBreed: [27]},
+    {id: 458, name: "Wool", rarity: "Limited", forBreed: [27]},
+    {id: 459, name: "Spores", rarity: "Uncommon", forBreed: [27]},
+    {id: 460, name: "Quagga", rarity: "Limited", forBreed: [27]},
+    {id: 461, name: "Sparkle", rarity: "Uncommon", forBreed: [27]},
+    {id: 462, name: "Runes", rarity: "Uncommon", forBreed: [27]},
+    {id: 463, name: "Greenskeeper", rarity: "Limited", forBreed: [27]},
+    {id: 466, name: "Brightshine", rarity: "Rare", forBreed: [27]},
+    {id: 467, name: "Gnarlhorns", rarity: "Limited", forBreed: [27]},
+    {id: 477, name: "Thundercrack", rarity: "Rare", forBreed: [27]},
+    {id: 479, name: "Warrior", rarity: "Rare", forBreed: [27]},
+
+    // Dusthide (id: 25)
+    {id: 281, name: "Blossom", rarity: "Limited", forBreed: [25]},
+    {id: 282, name: "Carnivore", rarity: "Limited", forBreed: [25]},
+    {id: 283, name: "Mandibles", rarity: "Limited", forBreed: [25]},
+    {id: 284, name: "Okapi", rarity: "Uncommon", forBreed: [25]},
+    {id: 285, name: "Opal", rarity: "Rare", forBreed: [25]},
+    {id: 286, name: "Angler", rarity: "Limited", forBreed: [25]},
+    {id: 287, name: "Gembond", rarity: "Uncommon", forBreed: [25]},
+    {id: 288, name: "Dewlap", rarity: "Limited", forBreed: [25]},
+    {id: 289, name: "Batty", rarity: "Limited", forBreed: [25]},
+    {id: 290, name: "Pachy", rarity: "Limited", forBreed: [25]},
+    {id: 291, name: "Whiskers", rarity: "Limited", forBreed: [25]},
+    {id: 292, name: "Sparkle", rarity: "Uncommon", forBreed: [25]},
+    {id: 293, name: "Polkadot", rarity: "Limited", forBreed: [25]},
+    {id: 294, name: "Ringlets", rarity: "Uncommon", forBreed: [25]},
+    {id: 295, name: "Spores", rarity: "Uncommon", forBreed: [25]},
+    {id: 296, name: "Veil", rarity: "Limited", forBreed: [25]},
+    {id: 297, name: "Smoke", rarity: "Uncommon", forBreed: [25]},
+    {id: 298, name: "Spines", rarity: "Uncommon", forBreed: [25]},
+    {id: 299, name: "Topcoat", rarity: "Limited", forBreed: [25]},
+    {id: 300, name: "Wavecrest", rarity: "Limited", forBreed: [25]},
+    {id: 307, name: "Greenskeeper", rarity: "Limited", forBreed: [25]},
+    {id: 309, name: "Brightshine", rarity: "Rare", forBreed: [25]},
+    {id: 345, name: "Thorns", rarity: "Limited", forBreed: [25]},
+    {id: 405, name: "Loam", rarity: "Limited", forBreed: [25]},
+    {id: 480, name: "Warrior", rarity: "Rare", forBreed: [25]},
+
+    // Everlux (id: 26)
+    {id: 350, name: "Augment", rarity: "Rare", forBreed: [26]},
+    {id: 351, name: "Batty", rarity: "Limited", forBreed: [26]},
+    {id: 352, name: "Chitin", rarity: "Rare", forBreed: [26]},
+    {id: 353, name: "Eclipse", rarity: "Rare", forBreed: [26]},
+    {id: 354, name: "Fishbone", rarity: "Limited", forBreed: [26]},
+    {id: 355, name: "Flutter", rarity: "Rare", forBreed: [26]},
+    {id: 356, name: "Glitch", rarity: "Rare", forBreed: [26]},
+    {id: 357, name: "Stained", rarity: "Rare", forBreed: [26]},
+    {id: 358, name: "Underbelly", rarity: "Common", forBreed: [26]},
+    {id: 359, name: "Gecko", rarity: "Uncommon", forBreed: [26]},
+    {id: 360, name: "Lode", rarity: "Rare", forBreed: [26]},
+    {id: 361, name: "Eclosion", rarity: "Rare", forBreed: [26]},
+    {id: 362, name: "Gembond", rarity: "Uncommon", forBreed: [26]},
+    {id: 363, name: "Jellyfish", rarity: "Rare", forBreed: [26]},
+    {id: 364, name: "Kumo", rarity: "Limited", forBreed: [26]},
+    {id: 365, name: "Mandibles", rarity: "Limited", forBreed: [26]},
+    {id: 366, name: "Nudibranch", rarity: "Rare", forBreed: [26]},
+    {id: 367, name: "Paradise", rarity: "Rare", forBreed: [26]},
+    {id: 368, name: "Peacock", rarity: "Common", forBreed: [26]},
+    {id: 369, name: "Points", rarity: "Common", forBreed: [26]},
+    {id: 370, name: "Polkadot", rarity: "Limited", forBreed: [26]},
+    {id: 371, name: "Rift", rarity: "Rare", forBreed: [26]},
+    {id: 372, name: "Runes", rarity: "Uncommon", forBreed: [26]},
+    {id: 373, name: "Scales", rarity: "Limited", forBreed: [26]},
+    {id: 374, name: "Skuttle", rarity: "Limited", forBreed: [26]},
+    {id: 375, name: "Smoke", rarity: "Uncommon", forBreed: [26]},
+    {id: 376, name: "Space", rarity: "Rare", forBreed: [26]},
+    {id: 377, name: "Sparkle", rarity: "Uncommon", forBreed: [26]},
+    {id: 378, name: "Spines", rarity: "Uncommon", forBreed: [26]},
+    {id: 379, name: "Spores", rarity: "Uncommon", forBreed: [26]},
+    {id: 380, name: "Sunsail", rarity: "Rare", forBreed: [26]},
+    {id: 381, name: "Thorns", rarity: "Limited", forBreed: [26]},
+    {id: 382, name: "Whiskers", rarity: "Limited", forBreed: [26]},
+    {id: 383, name: "Wish", rarity: "Rare", forBreed: [26]},
+    {id: 384, name: "Wool", rarity: "Limited", forBreed: [26]},
+    {id: 385, name: "Harp", rarity: "Rare", forBreed: [26]},
+    {id: 410, name: "Loam", rarity: "Limited", forBreed: [26]},
+    {id: 425, name: "Crystalline", rarity: "Rare", forBreed: [26]},
+    {id: 429, name: "Mistral", rarity: "Rare", forBreed: [26]},
+    {id: 432, name: "Wavecrest", rarity: "Limited", forBreed: [26]},
+    {id: 465, name: "Brightshine", rarity: "Rare", forBreed: [26]},
+
+    // Gaoler (id: 17)
+    {id: 25, name: "Ghost", rarity: "Uncommon", forBreed: [17]},
+    {id: 26, name: "Shardflank", rarity: "Limited", forBreed: [17]},
+    {id: 27, name: "Gnarlhorns", rarity: "Limited", forBreed: [17]},
+    {id: 28, name: "Smoke", rarity: "Uncommon", forBreed: [17]},
+    {id: 29, name: "Thylacine", rarity: "Common", forBreed: [17]},
+    {id: 30, name: "Ringlets", rarity: "Uncommon", forBreed: [17]},
+    {id: 31, name: "Underbelly", rarity: "Common", forBreed: [17]},
+    {id: 32, name: "Runes", rarity: "Uncommon", forBreed: [17]},
+    {id: 33, name: "Scorpion", rarity: "Limited", forBreed: [17]},
+    {id: 34, name: "Wintercoat", rarity: "Limited", forBreed: [17]},
+    {id: 35, name: "Weathered", rarity: "Limited", forBreed: [17]},
+    {id: 36, name: "Blossom", rarity: "Limited", forBreed: [17]},
+    {id: 37, name: "Opal", rarity: "Rare", forBreed: [17]},
+    {id: 38, name: "Veined", rarity: "Limited", forBreed: [17]},
+    {id: 39, name: "Trimmings", rarity: "Limited", forBreed: [17]},
+    {id: 55, name: "Braids", rarity: "Limited", forBreed: [17]},
+    {id: 101, name: "Glimmer", rarity: "Rare", forBreed: [17]},
+    {id: 158, name: "Monarch", rarity: "Rare", forBreed: [17]},
+    {id: 166, name: "Carnivore", rarity: "Limited", forBreed: [17]},
+    {id: 172, name: "Stained", rarity: "Rare", forBreed: [17]},
+    {id: 173, name: "Augment", rarity: "Rare", forBreed: [17]},
+    {id: 181, name: "Spines", rarity: "Uncommon", forBreed: [17]},
+    {id: 182, name: "Okapi", rarity: "Uncommon", forBreed: [17]},
+    {id: 187, name: "Lace", rarity: "Uncommon", forBreed: [17]},
+    {id: 188, name: "Spectre", rarity: "Rare", forBreed: [17]},
+    {id: 189, name: "Branches", rarity: "Limited", forBreed: [17]},
+    {id: 190, name: "Shark", rarity: "Limited", forBreed: [17]},
+    {id: 191, name: "Peacock", rarity: "Common", forBreed: [17]},
+    {id: 192, name: "Smirch", rarity: "Limited", forBreed: [17]},
+    {id: 193, name: "Sparkle", rarity: "Uncommon", forBreed: [17]},
+    {id: 194, name: "Thundercrack", rarity: "Rare", forBreed: [17]},
+    {id: 195, name: "Thundercrack", rarity: "Rare", forBreed: [17]},
+    {id: 212, name: "Riot", rarity: "Rare", forBreed: [17]},
+    {id: 265, name: "Crystalline", rarity: "Rare", forBreed: [17]},
+    {id: 272, name: "Mistral", rarity: "Rare", forBreed: [17]},
+    {id: 286, name: "Weaver", rarity: "Limited", forBreed: [17]},
+    {id: 302, name: "Firebreather", rarity: "Limited", forBreed: [17]},
+    {id: 303, name: "Firebreather", rarity: "Limited", forBreed: [17]},
+    {id: 346, name: "Thorns", rarity: "Limited", forBreed: [17]},
+    {id: 386, name: "Branches", rarity: "Limited", forBreed: [17]},
+    {id: 387, name: "Circuit", rarity: "Rare", forBreed: [17]},
+    {id: 388, name: "Soap", rarity: "Rare", forBreed: [17]},
+    {id: 389, name: "Whiskers", rarity: "Limited", forBreed: [17]},
+    {id: 390, name: "Rockbreaker", rarity: "Rare", forBreed: [17]},
+    {id: 391, name: "Rockbreaker", rarity: "Rare", forBreed: [17]},
+    {id: 406, name: "Loam", rarity: "Limited", forBreed: [17]},
+    {id: 417, name: "Gecko", rarity: "Uncommon", forBreed: [17]},
+    {id: 429, name: "Metallic", rarity: "Rare", forBreed: [17]},
+
+    // Sandsurge (id: 23)
+    {id: 173, name: "Augment", rarity: "Rare", forBreed: [23]},
+    {id: 174, name: "Beard", rarity: "Limited", forBreed: [23]},
+    {id: 175, name: "Kumo", rarity: "Limited", forBreed: [23]},
+    {id: 176, name: "Gembond", rarity: "Uncommon", forBreed: [23]},
+    {id: 177, name: "Darts", rarity: "Limited", forBreed: [23]},
+    {id: 178, name: "Runes", rarity: "Uncommon", forBreed: [23]},
+    {id: 179, name: "Thylacine", rarity: "Common", forBreed: [23]},
+    {id: 180, name: "Soap", rarity: "Rare", forBreed: [23]},
+    {id: 181, name: "Spines", rarity: "Uncommon", forBreed: [23]},
+    {id: 182, name: "Okapi", rarity: "Uncommon", forBreed: [23]},
+    {id: 183, name: "Chitin", rarity: "Rare", forBreed: [23]},
+    {id: 184, name: "Crest", rarity: "Limited", forBreed: [23]},
+    {id: 185, name: "Fishbone", rarity: "Limited", forBreed: [23]},
+    {id: 186, name: "Keel", rarity: "Limited", forBreed: [23]},
+    {id: 187, name: "Paisley", rarity: "Limited", forBreed: [23]},
+    {id: 188, name: "Spectre", rarity: "Rare", forBreed: [23]},
+    {id: 189, name: "Branches", rarity: "Limited", forBreed: [23]},
+    {id: 190, name: "Shark", rarity: "Limited", forBreed: [23]},
+    {id: 191, name: "Peacock", rarity: "Common", forBreed: [23]},
+    {id: 192, name: "Smirch", rarity: "Limited", forBreed: [23]},
+    {id: 193, name: "Sparkle", rarity: "Uncommon", forBreed: [23]},
+    {id: 194, name: "Thundercrack", rarity: "Rare", forBreed: [23]},
+    {id: 195, name: "Malachite", rarity: "Limited", forBreed: [23]},
+    {id: 210, name: "Starfall", rarity: "Rare", forBreed: [23]},
+    {id: 245, name: "Rockbreaker", rarity: "Rare", forBreed: [23]},
+    {id: 284, name: "Orb", rarity: "Limited", forBreed: [23]},
+    {id: 341, name: "Flameforger", rarity: "Rare", forBreed: [23]},
+    {id: 347, name: "Thorns", rarity: "Limited", forBreed: [23]},
+    {id: 367, name: "Paradise", rarity: "Rare", forBreed: [23]},
+    {id: 391, name: "Caterpillar", rarity: "Limited", forBreed: [23]},
+    {id: 394, name: "Fern", rarity: "Limited", forBreed: [23]},
+    {id: 397, name: "Vipera", rarity: "Uncommon", forBreed: [23]},
+    {id: 398, name: "Blossom", rarity: "Limited", forBreed: [23]},
+    {id: 407, name: "Loam", rarity: "Limited", forBreed: [23]},
+    {id: 408, name: "Spores", rarity: "Uncommon", forBreed: [23]},
+    {id: 410, name: "Capsule", rarity: "Limited", forBreed: [23]},
+    {id: 418, name: "Gecko", rarity: "Uncommon", forBreed: [23]},
+    {id: 442, name: "Lacquer", rarity: "Common", forBreed: [23]},
+    {id: 443, name: "Hawkmoth", rarity: "Rare", forBreed: [23]},
+    {id: 444, name: "Falcon", rarity: "Common", forBreed: [23]},
+    {id: 445, name: "Tear", rarity: "Limited", forBreed: [23]},
+    {id: 446, name: "Butterfly", rarity: "Rare", forBreed: [23]},
+    {id: 447, name: "Eel", rarity: "Uncommon", forBreed: [23]},
+    {id: 448, name: "Peregrine", rarity: "Common", forBreed: [23]},
+    {id: 449, name: "Lode", rarity: "Rare", forBreed: [23]},
+    {id: 467, name: "Gnarlhorns", rarity: "Limited", forBreed: [23]},
+    {id: 468, name: "Whiskers", rarity: "Limited", forBreed: [23]},
+    {id: 469, name: "Smoke", rarity: "Uncommon", forBreed: [23]},
+    {id: 470, name: "Batty", rarity: "Limited", forBreed: [23]},
+    {id: 471, name: "Mandibles", rarity: "Limited", forBreed: [23]},
+    {id: 472, name: "Eclipse", rarity: "Rare", forBreed: [23]},
+    {id: 473, name: "Firefly", rarity: "Limited", forBreed: [23]},
+    {id: 474, name: "Flecks", rarity: "Limited", forBreed: [23]},
+    {id: 475, name: "Polkadot", rarity: "Limited", forBreed: [23]},
+    {id: 476, name: "Thundercrack", rarity: "Rare", forBreed: [23]},
+
+    // Undertide (id: 21)
+    {id: 109, name: "Underbelly", rarity: "Common", forBreed: [21]},
+    {id: 110, name: "Stained", rarity: "Rare", forBreed: [21]},
+    {id: 111, name: "Capsule", rarity: "Limited", forBreed: [21]},
+    {id: 112, name: "Flecks", rarity: "Limited", forBreed: [21]},
+    {id: 113, name: "Veined", rarity: "Limited", forBreed: [21]},
+    {id: 114, name: "Runes", rarity: "Uncommon", forBreed: [21]},
+    {id: 115, name: "Crackle", rarity: "Uncommon", forBreed: [21]},
+    {id: 116, name: "Filigree", rarity: "Rare", forBreed: [21]},
+    {id: 117, name: "Circuit", rarity: "Rare", forBreed: [21]},
+    {id: 118, name: "Feather", rarity: "Limited", forBreed: [21]},
+    {id: 119, name: "Remora", rarity: "Limited", forBreed: [21]},
+    {id: 120, name: "Ringlets", rarity: "Uncommon", forBreed: [21]},
+    {id: 121, name: "Ghost", rarity: "Uncommon", forBreed: [21]},
+    {id: 122, name: "Sparkle", rarity: "Uncommon", forBreed: [21]},
+    {id: 123, name: "Gembond", rarity: "Uncommon", forBreed: [21]},
+    {id: 124, name: "Soap", rarity: "Rare", forBreed: [21]},
+    {id: 125, name: "Tentacles", rarity: "Limited", forBreed: [21]},
+    {id: 126, name: "Nudibranch", rarity: "Rare", forBreed: [21]},
+    {id: 127, name: "Pufferfish", rarity: "Limited", forBreed: [21]},
+    {id: 128, name: "Plating", rarity: "Limited", forBreed: [21]},
+    {id: 129, name: "Okapi", rarity: "Uncommon", forBreed: [21]},
+    {id: 130, name: "Sailfin", rarity: "Rare", forBreed: [21]},
+    {id: 170, name: "Brightshine", rarity: "Rare", forBreed: [21]},
+    {id: 246, name: "Angler", rarity: "Limited", forBreed: [21]},
+    {id: 247, name: "Opal", rarity: "Rare", forBreed: [21]},
+    {id: 248, name: "Branches", rarity: "Limited", forBreed: [21]},
+    {id: 249, name: "Contour", rarity: "Common", forBreed: [21]},
+    {id: 250, name: "Crest", rarity: "Limited", forBreed: [21]},
+    {id: 251, name: "Fans", rarity: "Uncommon", forBreed: [21]},
+    {id: 252, name: "Firebreather", rarity: "Limited", forBreed: [21]},
+    {id: 253, name: "Firefly", rarity: "Limited", forBreed: [21]},
+    {id: 254, name: "Koi", rarity: "Rare", forBreed: [21]},
+    {id: 255, name: "Medusa", rarity: "Rare", forBreed: [21]},
+    {id: 256, name: "Porcupine", rarity: "Rare", forBreed: [21]},
+    {id: 257, name: "Scales", rarity: "Limited", forBreed: [21]},
+    {id: 258, name: "Shark", rarity: "Limited", forBreed: [21]},
+    {id: 259, name: "Smirch", rarity: "Limited", forBreed: [21]},
+    {id: 260, name: "Smoke", rarity: "Uncommon", forBreed: [21]},
+    {id: 261, name: "Spines", rarity: "Uncommon", forBreed: [21]},
+    {id: 262, name: "Stinger", rarity: "Limited", forBreed: [21]},
+    {id: 263, name: "Thorns", rarity: "Limited", forBreed: [21]},
+    {id: 264, name: "Malachite", rarity: "Limited", forBreed: [21]},
+    {id: 267, name: "Blossom", rarity: "Limited", forBreed: [21]},
+    {id: 268, name: "Keel", rarity: "Limited", forBreed: [21]},
+    {id: 269, name: "Jellyfish", rarity: "Rare", forBreed: [21]},
+    {id: 270, name: "Saturn", rarity: "Uncommon", forBreed: [21]},
+    {id: 271, name: "Weaver", rarity: "Limited", forBreed: [21]},
+    {id: 301, name: "Wavecrest", rarity: "Limited", forBreed: [21]},
+    {id: 305, name: "Firebreather", rarity: "Limited", forBreed: [21]},
+    {id: 390, name: "Caterpillar", rarity: "Limited", forBreed: [21]},
+    {id: 398, name: "Vipera", rarity: "Uncommon", forBreed: [21]},
+    {id: 408, name: "Loam", rarity: "Limited", forBreed: [21]},
+    {id: 419, name: "Gecko", rarity: "Uncommon", forBreed: [21]},
+    {id: 422, name: "Eclipse", rarity: "Rare", forBreed: [21]},
+    {id: 427, name: "Trickmurk", rarity: "Rare", forBreed: [21]},
+    {id: 464, name: "Greenskeeper", rarity: "Limited", forBreed: [21]},
+
+    // Veilspun (id: 19)
+    {id: 56, name: "Capsule", rarity: "Limited", forBreed: [19]},
+    {id: 58, name: "Crackle", rarity: "Uncommon", forBreed: [19]},
+    {id: 59, name: "Okapi", rarity: "Uncommon", forBreed: [19]},
+    {id: 61, name: "Firefly", rarity: "Limited", forBreed: [19]},
+    {id: 62, name: "Opal", rarity: "Rare", forBreed: [19]},
+    {id: 63, name: "Branches", rarity: "Limited", forBreed: [19]},
+    {id: 64, name: "Flecks", rarity: "Limited", forBreed: [19]},
+    {id: 65, name: "Beetle", rarity: "Limited", forBreed: [19]},
+    {id: 66, name: "Diaphanous", rarity: "Rare", forBreed: [19]},
+    {id: 67, name: "Mop", rarity: "Limited", forBreed: [19]},
+    {id: 68, name: "Thorns", rarity: "Limited", forBreed: [19]},
+    {id: 69, name: "Vivid", rarity: "Rare", forBreed: [19]},
+    {id: 70, name: "Underbelly", rarity: "Common", forBreed: [19]},
+    {id: 71, name: "Web", rarity: "Limited", forBreed: [19]},
+    {id: 72, name: "Stained", rarity: "Rare", forBreed: [19]},
+    {id: 76, name: "Gliders", rarity: "Rare", forBreed: [19]},
+    {id: 77, name: "Pinions", rarity: "Limited", forBreed: [19]},
+    {id: 80, name: "Kumo", rarity: "Limited", forBreed: [19]},
+    {id: 81, name: "Mucous", rarity: "Limited", forBreed: [19]},
+    {id: 82, name: "Polypore", rarity: "Limited", forBreed: [19]},
+    {id: 94, name: "Glimmer", rarity: "Rare", forBreed: [19]},
+    {id: 95, name: "Butterfly", rarity: "Rare", forBreed: [19]},
+    {id: 96, name: "Sparkle", rarity: "Uncommon", forBreed: [19]},
+    {id: 98, name: "Sparkle", rarity: "Uncommon", forBreed: [19]},
+    {id: 100, name: "Sparkle", rarity: "Uncommon", forBreed: [19]},
+    {id: 102, name: "Glimmer", rarity: "Rare", forBreed: [19]},
+    {id: 108, name: "Koi", rarity: "Rare", forBreed: [19]},
+    {id: 118, name: "Feather", rarity: "Limited", forBreed: [19]},
+    {id: 126, name: "Nudibranch", rarity: "Rare", forBreed: [19]},
+    {id: 129, name: "Okapi", rarity: "Uncommon", forBreed: [19]},
+    {id: 130, name: "Sailfin", rarity: "Rare", forBreed: [19]},
+    {id: 131, name: "Ghost", rarity: "Uncommon", forBreed: [19]},
+    {id: 133, name: "Filigree", rarity: "Rare", forBreed: [19]},
+    {id: 134, name: "Veined", rarity: "Limited", forBreed: [19]},
+    {id: 138, name: "Fern", rarity: "Limited", forBreed: [19]},
+    {id: 139, name: "Keel", rarity: "Limited", forBreed: [19]},
+    {id: 140, name: "Monarch", rarity: "Rare", forBreed: [19]},
+    {id: 141, name: "Flutter", rarity: "Rare", forBreed: [19]},
+    {id: 142, name: "Lace", rarity: "Uncommon", forBreed: [19]},
+    {id: 143, name: "Mandibles", rarity: "Limited", forBreed: [19]},
+    {id: 144, name: "Underbelly", rarity: "Common", forBreed: [19]},
+    {id: 169, name: "Brightshine", rarity: "Rare", forBreed: [19]},
+    {id: 302, name: "Firebreather", rarity: "Limited", forBreed: [19]},
+    {id: 338, name: "Choir", rarity: "Uncommon", forBreed: [19]},
+    {id: 344, name: "Mosaic", rarity: "Uncommon", forBreed: [19]},
+    {id: 377, name: "Fissure", rarity: "Limited", forBreed: [19]},
+    {id: 383, name: "Rosette", rarity: "Uncommon", forBreed: [19]},
+    {id: 384, name: "Spire", rarity: "Rare", forBreed: [19]},
+    {id: 385, name: "Larvae", rarity: "Limited", forBreed: [19]},
+    {id: 392, name: "Contour", rarity: "Common", forBreed: [19]},
+    {id: 393, name: "Medusa", rarity: "Rare", forBreed: [19]},
+    {id: 394, name: "Smirch", rarity: "Limited", forBreed: [19]},
+    {id: 395, name: "Soap", rarity: "Rare", forBreed: [19]},
+    {id: 396, name: "Blossom", rarity: "Limited", forBreed: [19]},
+    {id: 409, name: "Loam", rarity: "Limited", forBreed: [19]},
+    {id: 420, name: "Gecko", rarity: "Uncommon", forBreed: [19]},
+    {id: 423, name: "Eclipse", rarity: "Rare", forBreed: [19]},
+    {id: 427, name: "Trickmurk", rarity: "Rare", forBreed: [19]},
+    {id: 453, name: "Varnish", rarity: "Common", forBreed: [19]}
+]
+};
+
+// =========================
+// UTILITY FUNCTIONS
+// =========================
+function getRandomElement(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRarityRank(rarity) {
+    const ranks = ["Plentiful", "Common", "Uncommon", "Limited", "Rare"];
+    return ranks.indexOf(rarity);
+}
+
+function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const button = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"]`);
+        const originalText = button.textContent;
+        button.textContent = 'Copied!';
+        setTimeout(() => {
+            button.textContent = originalText;
+        }, 2000);
+    });
+}
+
+function canBreed(parent1, parent2) {
+    const parent1IsAncient = parent1.breed.rarity === "Ancient";
+    const parent2IsAncient = parent2.breed.rarity === "Ancient";
+    
+    // Ancient breeds can only breed with the exact same breed
+    if ((parent1IsAncient || parent2IsAncient) && parent1.breed.id !== parent2.breed.id) {
+        return false;
+    }
+    
+    return true;
+}
+
+// ADD THIS FUNCTION HERE
+function clearOffspringContainer() {
+    const container = document.getElementById('offspring-container');
+    if (container) {
+        container.innerHTML = '';
+    }
+}
+
+function setupOffspringCopyButtons() {
+    // This will be called after offspring are displayed
+    document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const urlBox = this.previousElementSibling;
+            if (urlBox && urlBox.classList.contains('url-box')) {
+                navigator.clipboard.writeText(urlBox.textContent).then(() => {
+                    const originalText = this.textContent;
+                    this.textContent = 'Copied!';
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                    }, 2000);
+                });
+            }
+        });
+    });
+}
+
+function filterGenesForBreed(genes, breedId) {
+    return genes.filter(gene => 
+        gene.forBreed === null || 
+        gene.forBreed === undefined || 
+        (Array.isArray(gene.forBreed) && gene.forBreed.includes(breedId))
+    );
+}
+
+function getRandomGeneForBreed(genes, breedId) {
+    const compatibleGenes = filterGenesForBreed(genes, breedId);
+    return getRandomElement(compatibleGenes);
+}
+
+// =========================
+// CORE FUNCTIONS
+// =========================
+function generateRandomDragon() {
+    debugLog('Generating random dragon');
+    const breed = getRandomElement(data.breeds);
+    const gender = Math.random() < 0.5 ? 0 : 1;
+    
+    const primaryGene = getRandomGeneForBreed(data.primaryGenes, breed.id);
+    const secondaryGene = getRandomGeneForBreed(data.secondaryGenes, breed.id);
+    const tertiaryGene = getRandomGeneForBreed(data.tertiaryGenes, breed.id);
+    
+    const primaryColor = getRandomElement(data.colors);
+    const secondaryColor = getRandomElement(data.colors);
+    const tertiaryColor = getRandomElement(data.colors);
+    
+    const eyeType = getRandomElement(data.eyeTypes);
+    
+    return {
+        breed,
+        gender,
+        primaryGene,
+        secondaryGene,
+        tertiaryGene,
+        primaryColor,
+        secondaryColor,
+        tertiaryColor,
+        eyeType
+    };
+}
+
+// ADD THIS COMPLETE breedDragons FUNCTION
+function breedDragons(parent1, parent2) {
+    debugLog('Breeding dragons');
+    const offspring = [];
+    
+    // Check for ancient breed compatibility
+    const parent1IsAncient = parent1.breed.rarity === "Ancient";
+    const parent2IsAncient = parent2.breed.rarity === "Ancient";
+    
+    // If one parent is ancient and the other isn't the same breed, breeding fails
+    if ((parent1IsAncient || parent2IsAncient) && parent1.breed.id !== parent2.breed.id) {
+        debugLog('Ancient breed mismatch - cannot breed different ancient breeds');
+        const container = document.getElementById('offspring-container');
+        if (container) {
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #ff6b6b;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                    <h3>Breeding Incompatible</h3>
+                    <p>Ancient breeds can only breed with the same exact breed.</p>
+                    <p>${parent1.breed.name} (${parent1.breed.rarity}) cannot breed with ${parent2.breed.name} (${parent2.breed.rarity}).</p>
+                </div>
+            `;
+        }
+        return []; // Return empty array - no offspring
+    }
+    
+    // Generate 5 offspring
+    for (let i = 0; i < 5; i++) {
+        try {
+            // Determine breed - updated logic
+            let breed;
+            
+            if (parent1IsAncient && parent2IsAncient) {
+                // Both ancient - must be same breed, so use either
+                breed = parent1.breed;
+            } else if (parent1.breed.id === parent2.breed.id) {
+                // Same breed
+                breed = parent1.breed;
+            } else {
+                // Different non-ancient breeds - use rarity-based selection
+                const rarity1 = parent1.breed.rarity;
+                const rarity2 = parent2.breed.rarity;
+                
+                if (rarity1 === rarity2) {
+                    breed = Math.random() < 0.5 ? parent1.breed : parent2.breed;
+                } else {
+                    const rank1 = getRarityRank(rarity1);
+                    const rank2 = getRarityRank(rarity2);
+                    const rarer = rank1 > rank2 ? parent1.breed : parent2.breed;
+                    const lessRare = rank1 > rank2 ? parent2.breed : parent1.breed;
+                    
+                    const odds = data.breedOdds[lessRare.rarity][rarer.rarity] || 0.5;
+                    breed = Math.random() < odds ? rarer : lessRare;
+                }
+            }
+            
+            // Determine gender (50/50)
+            const gender = Math.random() < 0.5 ? 0 : 1;
+            
+            // Determine genes with error handling
+            let primaryGene, secondaryGene, tertiaryGene;
+            try {
+                primaryGene = determineGene(parent1.primaryGene, parent2.primaryGene, "primary");
+                secondaryGene = determineGene(parent1.secondaryGene, parent2.secondaryGene, "secondary");
+                tertiaryGene = determineGene(parent1.tertiaryGene, parent2.tertiaryGene, "tertiary");
+            } catch (error) {
+                console.error('Error determining genes:', error);
+                // Fallback to parent genes if determination fails
+                primaryGene = Math.random() < 0.5 ? parent1.primaryGene : parent2.primaryGene;
+                secondaryGene = Math.random() < 0.5 ? parent1.secondaryGene : parent2.secondaryGene;
+                tertiaryGene = Math.random() < 0.5 ? parent1.tertiaryGene : parent2.tertiaryGene;
+            }
+            
+            // Ensure genes are compatible with the offspring breed
+            const compatiblePrimaryGenes = filterGenesForBreed(data.primaryGenes, breed.id);
+            const compatibleSecondaryGenes = filterGenesForBreed(data.secondaryGenes, breed.id);
+            const compatibleTertiaryGenes = filterGenesForBreed(data.tertiaryGenes, breed.id);
+            
+            // If selected gene isn't compatible, choose a random compatible one
+            let finalPrimaryGene = primaryGene;
+            let finalSecondaryGene = secondaryGene;
+            let finalTertiaryGene = tertiaryGene;
+            
+            if (!compatiblePrimaryGenes.some(g => g.id === primaryGene.id)) {
+                finalPrimaryGene = getRandomElement(compatiblePrimaryGenes);
+            }
+            if (!compatibleSecondaryGenes.some(g => g.id === secondaryGene.id)) {
+                finalSecondaryGene = getRandomElement(compatibleSecondaryGenes);
+            }
+            if (!compatibleTertiaryGenes.some(g => g.id === tertiaryGene.id)) {
+                finalTertiaryGene = getRandomElement(compatibleTertiaryGenes);
+            }
+            
+            // Determine colors
+            const primaryColor = determineColor(parent1.primaryColor, parent2.primaryColor);
+            const secondaryColor = determineColor(parent1.secondaryColor, parent2.secondaryColor);
+            const tertiaryColor = determineColor(parent1.tertiaryColor, parent2.tertiaryColor);
+            
+            // Determine eye type based on probability
+            const eyeType = getRandomElement(data.eyeTypes);
+            
+            offspring.push({
+                breed,
+                gender,
+                primaryGene: finalPrimaryGene,
+                secondaryGene: finalSecondaryGene,
+                tertiaryGene: finalTertiaryGene,
+                primaryColor,
+                secondaryColor,
+                tertiaryColor,
+                eyeType
+            });
+            
+        } catch (error) {
+            console.error('Error generating offspring', i, ':', error);
+            // Skip this offspring if there's an error
+        }
+    }
+    
+    return offspring;
+}
+
+function determineGene(gene1, gene2, slot) {
+    if (gene1.id === gene2.id) {
+        return gene1;
+    }
+    
+    const rarity1 = gene1.rarity;
+    const rarity2 = gene2.rarity;
+    
+    let odds;
+    if (rarity1 === rarity2) {
+        odds = 0.5;
+    } else {
+        odds = data.geneOdds[rarity1][rarity2] || 0.5;
+    }
+    
+    return Math.random() < odds ? gene1 : gene2;
+}
+
+function determineColor(color1, color2) {
+    const minId = Math.min(color1.id, color2.id);
+    const maxId = Math.max(color1.id, color2.id);
+    const randomId = getRandomInt(minId, maxId);
+    return data.colors.find(color => color.id === randomId) || color1;
+}
+
+function generateScryingUrl(dragon) {
+    return `https://www1.flightrising.com/scrying/predict?` +
+        `breed=${dragon.breed.id}&` +
+        `gender=${dragon.gender}&` +
+        `age=1&` +
+        `bodygene=${dragon.primaryGene.id}&` +
+        `body=${dragon.primaryColor.urlValue}&` +
+        `winggene=${dragon.secondaryGene.id}&` +
+        `wings=${dragon.secondaryColor.urlValue}&` +
+        `tertgene=${dragon.tertiaryGene.id}&` +
+        `tert=${dragon.tertiaryColor.urlValue}&` +
+        `element=1&` +
+        `eyetype=${dragon.eyeType.id}`;
+}
+
+// =========================
+// UI FUNCTIONS (Preserving your originals with debugging)
+// =========================
+function populateDropdowns() {
+    debugLog('Populating dropdowns');
+    
+    try {
+        // Populate breed dropdowns
+        const breedSelects = document.querySelectorAll('select[id$="-breed"]');
+        breedSelects.forEach(select => {
+            data.breeds.forEach(breed => {
+                const option = document.createElement('option');
+                option.value = breed.id;
+                option.textContent = breed.name;
+                select.appendChild(option);
+            });
+        });
+        
+        // Populate color dropdowns
+        const colorSelects = document.querySelectorAll('select[id$="color-select"]');
+        colorSelects.forEach(select => {
+            data.colors.forEach(color => {
+                const option = document.createElement('option');
+                option.value = color.id;
+                option.textContent = `${color.name}`;
+                option.style.backgroundColor = color.hex;
+                select.appendChild(option);
+            });
+        });
+        
+        // Populate gene dropdowns based on initial breed selection
+        updateGeneDropdowns(1);
+        updateGeneDropdowns(2);
+        
+    } catch (error) {
+        console.error('Error in populateDropdowns:', error);
+    }
+}
+
+function updateGeneDropdowns(parentNum) {
+    try {
+        const breedId = parseInt(document.getElementById(`parent${parentNum}-breed`).value);
+        
+        // Get currently selected values BEFORE clearing
+        const primarySelect = document.getElementById(`parent${parentNum}-primary-gene`);
+        const secondarySelect = document.getElementById(`parent${parentNum}-secondary-gene`);
+        const tertiarySelect = document.getElementById(`parent${parentNum}-tertiary-gene`);
+        
+        const currentPrimary = primarySelect.value;
+        const currentSecondary = secondarySelect.value;
+        const currentTertiary = tertiarySelect.value;
+        
+        // Update primary gene dropdown
+        primarySelect.innerHTML = '';
+        const compatiblePrimary = filterGenesForBreed(data.primaryGenes, breedId);
+        compatiblePrimary.forEach(gene => {
+            const option = document.createElement('option');
+            option.value = gene.id;
+            option.textContent = `${gene.name}`;
+            primarySelect.appendChild(option);
+        });
+        
+        // Update secondary gene dropdown
+        secondarySelect.innerHTML = '';
+        const compatibleSecondary = filterGenesForBreed(data.secondaryGenes, breedId);
+        compatibleSecondary.forEach(gene => {
+            const option = document.createElement('option');
+            option.value = gene.id;
+            option.textContent = `${gene.name}`;
+            secondarySelect.appendChild(option);
+        });
+        
+        // Update tertiary gene dropdown
+        tertiarySelect.innerHTML = '';
+        const compatibleTertiary = filterGenesForBreed(data.tertiaryGenes, breedId);
+        compatibleTertiary.forEach(gene => {
+            const option = document.createElement('option');
+            option.value = gene.id;
+            option.textContent = `${gene.name}`;
+            tertiarySelect.appendChild(option);
+        });
+        
+        // Try to restore previous selections if they're still compatible
+        if (compatiblePrimary.some(g => g.id.toString() === currentPrimary)) {
+            primarySelect.value = currentPrimary;
+        } else if (compatiblePrimary.length > 0) {
+            // Select first available gene if previous selection is incompatible
+            primarySelect.value = compatiblePrimary[0].id;
+        }
+        
+        if (compatibleSecondary.some(g => g.id.toString() === currentSecondary)) {
+            secondarySelect.value = currentSecondary;
+        } else if (compatibleSecondary.length > 0) {
+            secondarySelect.value = compatibleSecondary[0].id;
+        }
+        
+        if (compatibleTertiary.some(g => g.id.toString() === currentTertiary)) {
+            tertiarySelect.value = currentTertiary;
+        } else if (compatibleTertiary.length > 0) {
+            tertiarySelect.value = compatibleTertiary[0].id;
+        }
+        
+    } catch (error) {
+        console.error(`Error updating gene dropdowns for parent ${parentNum}:`, error);
+    }
+}
+
+function updateDragonDisplay(dragon, parentNum) {
+    debugLog(`Updating dragon display for parent ${parentNum}`);
+    
+    try {
+        // Update breed
+        document.getElementById(`parent${parentNum}-breed`).value = dragon.breed.id;
+        
+        // Update gene dropdowns based on breed
+        updateGeneDropdowns(parentNum);
+        
+        // Update genes
+        document.getElementById(`parent${parentNum}-primary-gene`).value = dragon.primaryGene.id;
+        document.getElementById(`parent${parentNum}-secondary-gene`).value = dragon.secondaryGene.id;
+        document.getElementById(`parent${parentNum}-tertiary-gene`).value = dragon.tertiaryGene.id;
+        
+        // Update colors
+        document.getElementById(`parent${parentNum}-primary-color-select`).value = dragon.primaryColor.id;
+        document.getElementById(`parent${parentNum}-secondary-color-select`).value = dragon.secondaryColor.id;
+        document.getElementById(`parent${parentNum}-tertiary-color-select`).value = dragon.tertiaryColor.id;
+        
+        // Update gender
+        document.getElementById(`parent${parentNum}-gender`).value = dragon.gender;
+        
+        // Update visual display
+        document.getElementById(`parent${parentNum}-primary-color`).style.backgroundColor = dragon.primaryColor.hex;
+        document.getElementById(`parent${parentNum}-secondary-color`).style.backgroundColor = dragon.secondaryColor.hex;
+        document.getElementById(`parent${parentNum}-tertiary-color`).style.backgroundColor = dragon.tertiaryColor.hex;
+        
+        document.getElementById(`parent${parentNum}-primary-text`).textContent = 
+            `${dragon.primaryGene.name} - ${dragon.primaryColor.name}`;
+        document.getElementById(`parent${parentNum}-secondary-text`).textContent = 
+            `${dragon.secondaryGene.name} - ${dragon.secondaryColor.name}`;
+        document.getElementById(`parent${parentNum}-tertiary-text`).textContent = 
+            `${dragon.tertiaryGene.name} - ${dragon.tertiaryColor.name}`;
+        
+        // Update scrying URL
+        const url = generateScryingUrl(dragon);
+        document.getElementById(`parent${parentNum}-url`).textContent = url;
+        
+    } catch (error) {
+        console.error(`Error updating dragon ${parentNum}:`, error);
+    }
+}
+
+function getDragonFromForm(parentNum) {
+    const breedId = parseInt(document.getElementById(`parent${parentNum}-breed`).value);
+    const primaryGeneId = parseInt(document.getElementById(`parent${parentNum}-primary-gene`).value);
+    const secondaryGeneId = parseInt(document.getElementById(`parent${parentNum}-secondary-gene`).value);
+    const tertiaryGeneId = parseInt(document.getElementById(`parent${parentNum}-tertiary-gene`).value);
+    const primaryColorId = parseInt(document.getElementById(`parent${parentNum}-primary-color-select`).value);
+    const secondaryColorId = parseInt(document.getElementById(`parent${parentNum}-secondary-color-select`).value);
+    const tertiaryColorId = parseInt(document.getElementById(`parent${parentNum}-tertiary-color-select`).value);
+    const gender = parseInt(document.getElementById(`parent${parentNum}-gender`).value);
+    
+    const breed = data.breeds.find(b => b.id === breedId);
+    const primaryGene = data.primaryGenes.find(g => g.id === primaryGeneId);
+    const secondaryGene = data.secondaryGenes.find(g => g.id === secondaryGeneId);
+    const tertiaryGene = data.tertiaryGenes.find(g => g.id === tertiaryGeneId);
+    const primaryColor = data.colors.find(c => c.id === primaryColorId);
+    const secondaryColor = data.colors.find(c => c.id === secondaryColorId);
+    const tertiaryColor = data.colors.find(c => c.id === tertiaryColorId);
+    
+    return {
+        breed,
+        primaryGene,
+        secondaryGene,
+        tertiaryGene,
+        primaryColor,
+        secondaryColor,
+        tertiaryColor,
+        gender,
+        eyeType: getRandomElement(data.eyeTypes)
+    };
+}
+
+// ADD displayOffspring FUNCTION RIGHT HERE
+function displayOffspring(offspring) {
+    debugLog('Displaying offspring');
+    const container = document.getElementById('offspring-container');
+    
+    if (!container) {
+        console.error('Offspring container not found');
+        return;
+    }
+    
+    // Clear previous results
+    container.innerHTML = '';
+    
+    // Check if there are any offspring to display
+    if (offspring.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #888;">
+                <i class="fas fa-egg" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                <h3>No Offspring</h3>
+                <p>The dragons did not produce any offspring.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Display each offspring
+    offspring.forEach((dragon, index) => {
+        const egg = document.createElement('div');
+        egg.className = 'egg-card';
+        
+        const url = generateScryingUrl(dragon);
+        
+        egg.innerHTML = `
+            <div class="egg-number">${index + 1}</div>
+            <div class="egg-dragon">${dragon.breed.name}</div>
+            <div class="egg-trait">
+                <div class="egg-color" style="background-color: ${dragon.primaryColor.hex};"></div>
+                ${dragon.primaryGene.name} - ${dragon.primaryColor.name}
+            </div>
+            <div class="egg-trait">
+                <div class="egg-color" style="background-color: ${dragon.secondaryColor.hex};"></div>
+                ${dragon.secondaryGene.name} - ${dragon.secondaryColor.name}
+            </div>
+            <div class="egg-trait">
+                <div class="egg-color" style="background-color: ${dragon.tertiaryColor.hex};"></div>
+                ${dragon.tertiaryGene.name} - ${dragon.tertiaryColor.name}
+            </div>
+            <div class="egg-trait">
+                <i class="fas fa-eye"></i> ${dragon.eyeType.name}
+            </div>
+            <div class="url-box">${url}</div>
+            <button class="copy-btn">Copy URL</button>
+        `;
+        
+        container.appendChild(egg);
+    });
+    
+    // Set up copy buttons for the new offspring
+    setupOffspringCopyButtons();
+}
+
+// =========================
+// EVENT HANDLERS
+// =========================
+function setupEventListeners() {
+    debugLog('Setting up event listeners');
+    
+    try {
+        // Randomize buttons
+        const randomizeAllBtn = document.getElementById('randomize-all');
+        const randomizeParent1Btn = document.getElementById('randomize-parent1');
+        const randomizeParent2Btn = document.getElementById('randomize-parent2');
+        const breedBtn = document.getElementById('breed-btn');
+        
+        if (randomizeAllBtn) {
+            randomizeAllBtn.addEventListener('click', () => {
+                debugLog('Randomize all clicked');
+                const parent1 = generateRandomDragon();
+                const parent2 = generateRandomDragon();
+                updateDragonDisplay(parent1, 1);
+                updateDragonDisplay(parent2, 2);
+                clearOffspringContainer(); // Clear previous results
+            });
+        }
+        
+        if (randomizeParent1Btn) {
+            randomizeParent1Btn.addEventListener('click', () => {
+                debugLog('Randomize parent 1 clicked');
+                const parent1 = generateRandomDragon();
+                updateDragonDisplay(parent1, 1);
+                clearOffspringContainer(); // Clear previous results
+            });
+        }
+        
+        if (randomizeParent2Btn) {
+            randomizeParent2Btn.addEventListener('click', () => {
+                debugLog('Randomize parent 2 clicked');
+                const parent2 = generateRandomDragon();
+                updateDragonDisplay(parent2, 2);
+                clearOffspringContainer(); // Clear previous results
+            });
+        }
+        
+    // Breed button - UPDATED
+if (breedBtn) {
+    breedBtn.addEventListener('click', () => {
+        debugLog('Breed button clicked');
+        try {
+            const parent1 = getDragonFromForm(1);
+            const parent2 = getDragonFromForm(2);
+            
+            // Debug: log the parent data
+            console.log('Parent 1:', parent1);
+            console.log('Parent 2:', parent2);
+            
+            // Clear previous results first
+            clearOffspringContainer();
+            
+            // Check if breeding is possible
+            if (!canBreed(parent1, parent2)) {
+                const container = document.getElementById('offspring-container');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #ff6b6b;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                            <h3>Breeding Incompatible</h3>
+                            <p>Ancient breeds can only breed with the same exact breed.</p>
+                            <p>${parent1.breed.name} cannot breed with ${parent2.breed.name}.</p>
+                        </div>
+                    `;
+                }
+                return;
+            }
+            
+            // Generate offspring
+            const offspring = breedDragons(parent1, parent2);
+            console.log('Offspring generated:', offspring);
+            
+            // Display offspring
+            displayOffspring(offspring);
+            
+        } catch (error) {
+            console.error('Error breeding dragons:', error);
+            // Show error message to user
+            const container = document.getElementById('offspring-container');
+            if (container) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #ff6b6b;">
+                        <i class="fas fa-bug" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <h3>Breeding Error</h3>
+                        <p>There was an error generating offspring.</p>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    });
+}
+        
+// Breed change listeners
+document.querySelectorAll('select[id$="-breed"]').forEach(select => {
+    select.addEventListener('change', function() {
+        const parentNum = this.id.includes('parent1') ? 1 : 2;
+        updateGeneDropdowns(parentNum); // This now preserves compatible selections
+        
+        // Only update display after a brief delay to allow dropdowns to update
+        setTimeout(() => {
+            const dragon = getDragonFromForm(parentNum);
+            updateDragonDisplay(dragon, parentNum);
+        }, 100);
+        
+        // Clear any error messages when breed changes
+        clearOffspringContainer();
+    });
+});
+        
+        // General change listeners (for other dropdowns)
+        document.querySelectorAll('select:not([id$="-breed"])').forEach(select => {
+            select.addEventListener('change', function() {
+                const parentNum = this.id.includes('parent1') ? 1 : 2;
+                const dragon = getDragonFromForm(parentNum);
+                updateDragonDisplay(dragon, parentNum);
+                
+                // Clear any error messages when other traits change
+                clearOffspringContainer();
+            });
+        });
+        
+        debugLog('Event listeners setup complete');
+        
+    } catch (error) {
+        console.error('Error setting up event listeners:', error);
+    }
+}
+// =========================
+// INITIALIZATION
+// =========================
+function initializeApp() {
+    debugLog('Initializing application');
+    
+    try {
+        populateDropdowns();
+        setupEventListeners();
+        
+        // Generate initial random parents
+        const parent1 = generateRandomDragon();
+        const parent2 = generateRandomDragon();
+        updateDragonDisplay(parent1, 1);
+        updateDragonDisplay(parent2, 2);
+        
+        debugLog('Application initialized successfully');
+        
+    } catch (error) {
+        console.error('Failed to initialize application:', error);
+    }
+}
+
+// Start the application
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    initializeApp();
+}
+    </script>
+</body>
+</html>
